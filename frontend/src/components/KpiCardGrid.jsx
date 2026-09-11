@@ -1,6 +1,8 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ShieldCheck, Activity, AlertTriangle, Flame, Layers } from 'lucide-react';
+import { Card } from './ui/card';
+import { Badge } from './ui/badge';
 
 /**
  * Vibrant Solid/Gradient KPI Blocks
@@ -83,7 +85,8 @@ export default function KpiCardGrid({
       {cards.map((card, idx) => {
         const IconComponent = card.icon;
         return (
-          <motion.div
+          <Card
+            as={motion.div}
             key={idx}
             initial={{ opacity: 0, y: 18, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -166,7 +169,7 @@ export default function KpiCardGrid({
             </div>
 
             {/* Bottom row: Pill Badge */}
-            <div style={{
+            <Badge variant="glass" style={{
               display: 'inline-flex',
               alignItems: 'center',
               background: 'rgba(0, 0, 0, 0.25)',
@@ -179,8 +182,8 @@ export default function KpiCardGrid({
               alignSelf: 'flex-start'
             }}>
               {card.badge}
-            </div>
-          </motion.div>
+            </Badge>
+          </Card>
         );
       })}
     </div>
