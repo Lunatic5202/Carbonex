@@ -1,8 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ShieldCheck, Activity, AlertTriangle, Flame, Layers } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 
@@ -16,7 +14,6 @@ export default function KpiCardGrid({
   currentRiskScore = 18.5,
   currentBand = 'NORMAL'
 }) {
-  const gridRef = useRef(null);
   const totalNodes = nodesSummary.length || 10;
   const normalNodes = nodesSummary.filter(n => n.risk_band === 'NORMAL').length;
   const watchNodes = nodesSummary.filter(n => n.risk_band === 'WATCH').length;
@@ -78,29 +75,14 @@ export default function KpiCardGrid({
     }
   ];
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const context = gsap.context(() => {
-      const cardElements = gsap.utils.toArray('.kpi-card');
-      gsap.from(cardElements, {
-        opacity: 0,
-        y: 15,
-        duration: 0.65,
-        ease: 'power3.out',
-        stagger: 0.07,
-        scrollTrigger: {
-          trigger: gridRef.current,
-          start: 'top 86%',
-          once: true
-        }
-      });
-    }, gridRef);
-
-    return () => context.revert();
-  }, []);
+  const cardVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: .4, ease: 'easeOut' } }
+  };
+  const gridVariants = { hidden: {}, visible: { transition: { staggerChildren: .08 } } };
 
   return (
-    <div ref={gridRef} style={{
+    <motion.div variants={gridVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
       gap: '14px',
@@ -113,6 +95,10 @@ export default function KpiCardGrid({
             as={motion.div}
             key={idx}
             className="kpi-card"
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
             whileHover={{ y: -5, scale: 1.012 }}
             whileTap={{ scale: 0.985 }}
             style={{
@@ -203,6 +189,6 @@ export default function KpiCardGrid({
           </Card>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

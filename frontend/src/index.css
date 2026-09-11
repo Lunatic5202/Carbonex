@@ -1015,25 +1015,6 @@ h1 em {
   min-height: calc(100vh - 75px);
   overflow: hidden;
 }
-.route-curtain {
-  position: absolute;
-  z-index: 8;
-  inset: 0;
-  background: #b7ff4a;
-  clip-path: inset(0 0 0 100%);
-  pointer-events: none;
-}
-.route-curtain-line {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: #0b0d0c;
-  transform: scaleY(0);
-  transform-origin: bottom;
-  box-shadow: 0 0 22px rgba(11, 13, 12, 0.35);
-}
 .route-head {
   display: flex;
   justify-content: space-between;
@@ -1218,12 +1199,6 @@ h1 em {
 }
 .pipeline-end {
   color: #84939d;
-}
-.route-curtain {
-  background: var(--cyan);
-}
-.route-curtain-line {
-  background: #0d1114;
 }
 .route-index {
   color: var(--cyan);

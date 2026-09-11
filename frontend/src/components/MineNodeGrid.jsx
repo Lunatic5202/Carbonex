@@ -1,40 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Radio, AlertTriangle, ShieldCheck, Zap, HardHat } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from 'motion/react';
 
 export default function MineNodeGrid({
   nodesSummary = [],
   selectedNode = 'Node01',
   onSelectNode
 }) {
-  const gridRef = useRef(null);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const context = gsap.context(() => {
-      const nodeCards = gsap.utils.toArray('.mine-node-card');
-      if (!nodeCards.length) return;
-
-      gsap.from(nodeCards, {
-        opacity: 0,
-        y: 15,
-        duration: 0.65,
-        ease: 'power3.out',
-        stagger: 0.07,
-        scrollTrigger: {
-          trigger: gridRef.current,
-          start: 'top 86%',
-          once: true
-        }
-      });
-    }, gridRef);
-
-    return () => context.revert();
-  }, [nodesSummary.length]);
+  const nodeVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: .4, ease: 'easeOut' } }
+  };
+  const gridVariants = { hidden: {}, visible: { transition: { staggerChildren: .08 } } };
 
   return (
-    <div ref={gridRef} className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
+    <div className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -54,7 +34,7 @@ export default function MineNodeGrid({
         </span>
       </div>
 
-      <div style={{
+      <motion.div variants={gridVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
         gap: '12px'
@@ -64,9 +44,15 @@ export default function MineNodeGrid({
           const bandColor = node.status_color || 'var(--cyan)';
 
           return (
-            <div
+            <motion.div
               key={node.node_id}
               className="mine-node-card"
+              variants={nodeVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: .98 }}
               onClick={() => onSelectNode(node.node_id)}
               style={{
                 background: isSelected ? 'color-mix(in srgb, var(--cyan) 8%, transparent)' : 'var(--panel)',
@@ -136,10 +122,10 @@ export default function MineNodeGrid({
                 <div>Strain: <strong style={{ color: 'var(--text)' }}>{node.strain_microstrain?.toFixed(0)}µε</strong></div>
                 <div>Vib: <strong style={{ color: 'var(--text)' }}>{node.vibration_mms?.toFixed(2)}</strong></div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }
