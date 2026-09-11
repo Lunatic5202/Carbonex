@@ -1,13 +1,40 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Radio, AlertTriangle, ShieldCheck, Zap, HardHat } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function MineNodeGrid({
   nodesSummary = [],
   selectedNode = 'Node01',
   onSelectNode
 }) {
+  const gridRef = useRef(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const context = gsap.context(() => {
+      const nodeCards = gsap.utils.toArray('.mine-node-card');
+      if (!nodeCards.length) return;
+
+      gsap.from(nodeCards, {
+        opacity: 0,
+        y: 15,
+        duration: 0.65,
+        ease: 'power3.out',
+        stagger: 0.07,
+        scrollTrigger: {
+          trigger: gridRef.current,
+          start: 'top 86%',
+          once: true
+        }
+      });
+    }, gridRef);
+
+    return () => context.revert();
+  }, [nodesSummary.length]);
+
   return (
-    <div className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
+    <div ref={gridRef} className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -39,6 +66,7 @@ export default function MineNodeGrid({
           return (
             <div
               key={node.node_id}
+              className="mine-node-card"
               onClick={() => onSelectNode(node.node_id)}
               style={{
                 background: isSelected ? 'rgba(0, 240, 255, 0.08)' : '#0d1322',

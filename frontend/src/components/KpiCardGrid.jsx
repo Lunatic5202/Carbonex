@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ShieldCheck, Activity, AlertTriangle, Flame, Layers } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 
@@ -14,6 +16,7 @@ export default function KpiCardGrid({
   currentRiskScore = 18.5,
   currentBand = 'NORMAL'
 }) {
+  const gridRef = useRef(null);
   const totalNodes = nodesSummary.length || 10;
   const normalNodes = nodesSummary.filter(n => n.risk_band === 'NORMAL').length;
   const watchNodes = nodesSummary.filter(n => n.risk_band === 'WATCH').length;
@@ -75,8 +78,29 @@ export default function KpiCardGrid({
     }
   ];
 
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const context = gsap.context(() => {
+      const cardElements = gsap.utils.toArray('.kpi-card');
+      gsap.from(cardElements, {
+        opacity: 0,
+        y: 15,
+        duration: 0.65,
+        ease: 'power3.out',
+        stagger: 0.07,
+        scrollTrigger: {
+          trigger: gridRef.current,
+          start: 'top 86%',
+          once: true
+        }
+      });
+    }, gridRef);
+
+    return () => context.revert();
+  }, []);
+
   return (
-    <div style={{
+    <div ref={gridRef} style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
       gap: '14px',
@@ -88,13 +112,7 @@ export default function KpiCardGrid({
           <Card
             as={motion.div}
             key={idx}
-            initial={{ opacity: 0, y: 18, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              duration: 0.42,
-              delay: idx * 0.07,
-              ease: [0.23, 1, 0.32, 1]
-            }}
+            className="kpi-card"
             whileHover={{ y: -5, scale: 1.012 }}
             whileTap={{ scale: 0.985 }}
             style={{

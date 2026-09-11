@@ -79,13 +79,13 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {hasBands && (
           <g opacity="0.12">
             {/* Normal: 0-25 */}
-            <rect x={padding.left} y={getY(25)} width={chartW} height={getY(0) - getY(25)} fill="#10b981" />
+            <rect x={padding.left} y={getY(25)} width={chartW} height={getY(0) - getY(25)} fill="var(--cyan)" />
             {/* Watch: 26-50 */}
-            <rect x={padding.left} y={getY(50)} width={chartW} height={getY(25) - getY(50)} fill="#f59e0b" />
+            <rect x={padding.left} y={getY(50)} width={chartW} height={getY(25) - getY(50)} fill="var(--orange)" />
             {/* Warning: 51-75 */}
-            <rect x={padding.left} y={getY(75)} width={chartW} height={getY(50) - getY(75)} fill="#f97316" />
+            <rect x={padding.left} y={getY(75)} width={chartW} height={getY(50) - getY(75)} fill="var(--orange)" />
             {/* Critical: 76-100 */}
-            <rect x={padding.left} y={getY(100)} width={chartW} height={getY(75) - getY(100)} fill="#ef4444" />
+            <rect x={padding.left} y={getY(100)} width={chartW} height={getY(75) - getY(100)} fill="var(--lime)" />
           </g>
         )}
 
@@ -100,11 +100,11 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
                 y1={yPos}
                 x2={padding.left + chartW}
                 y2={yPos}
-                stroke="#1e293b"
+                stroke="var(--line)"
                 strokeDasharray="4 4"
                 strokeWidth="1"
               />
-              <text x={padding.left - 8} y={yPos + 4} fill="#64748b" fontSize="10" textAnchor="end">
+              <text x={padding.left - 8} y={yPos + 4} fill="var(--muted)" fontSize="10" textAnchor="end">
                 {yVal.toFixed(yVal > 10 ? 0 : 1)}
               </text>
             </g>
@@ -147,11 +147,11 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
               y1={padding.top}
               x2={hoveredPoint.x}
               y2={padding.top + chartH}
-              stroke="#00f0ff"
+              stroke="var(--cyan)"
               strokeDasharray="2 2"
               strokeWidth="1"
             />
-            <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill="#ffffff" stroke={color} strokeWidth="2" />
+            <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill="var(--text)" stroke={color} strokeWidth="2" />
           </g>
         )}
       </svg>
@@ -167,50 +167,50 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         gap: '14px',
         marginBottom: '20px'
       }}>
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid #00f0ff' }}>
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--cyan)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Historical Peak Risk
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: maxRisk > 75 ? '#ef4444' : maxRisk > 50 ? '#f97316' : '#00f0ff', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: maxRisk > 75 ? 'var(--lime)' : maxRisk > 50 ? 'var(--orange)' : 'var(--cyan)', fontFamily: 'Rajdhani, sans-serif' }}>
             {maxRisk.toFixed(1)} / 100
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
             Across {filteredData.length} observation days
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid #ef4444' }}>
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--lime)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Critical Hazards
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: criticalCount > 0 ? '#ef4444' : '#10b981', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: criticalCount > 0 ? 'var(--lime)' : 'var(--cyan)', fontFamily: 'Rajdhani, sans-serif' }}>
             {criticalCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
             Risk Score &gt; 75.0 (Emergency)
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid #f97316' }}>
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Warning Progression
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#f97316', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--orange)', fontFamily: 'Rajdhani, sans-serif' }}>
             {warningCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
             Deformation Acceleration &gt; 50.0
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid #f59e0b' }}>
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: '700' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Watch Drift
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#f59e0b', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--orange)', fontFamily: 'Rajdhani, sans-serif' }}>
             {watchCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
             Early Telemetry Deviation
           </div>
         </div>
@@ -226,21 +226,21 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
           flexWrap: 'wrap',
           gap: '12px',
           marginBottom: '16px',
-          borderBottom: '1px solid #1e293b',
+          borderBottom: '1px solid var(--line)',
           paddingBottom: '12px'
         }}>
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
               Calibrated Subsidence Risk Progression (365 Days)
             </h3>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', margin: '2px 0 0 0' }}>
               4-Tier Domain Zones: Normal (0-25), Watch (26-50), Warning (51-75), Critical (76-100)
             </p>
           </div>
 
           {/* Day range scrubber */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: '600' }}>FILTER DAYS:</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: '600' }}>FILTER DAYS:</span>
             <input
               type="range"
               min="1"
@@ -251,13 +251,13 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             />
             <span style={{
               fontFamily: 'JetBrains Mono, monospace',
-              color: '#00f0ff',
+              color: 'var(--cyan)',
               fontSize: '0.8rem',
               fontWeight: '700',
-              background: '#0a0e1a',
+              background: 'var(--bg)',
               padding: '2px 8px',
               borderRadius: '4px',
-              border: '1px solid #1e293b'
+              border: '1px solid var(--line)'
             }}>
               Day 1–{dayRange[1]}
             </span>
@@ -267,21 +267,21 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Hover details pill */}
         {hoveredPoint && (
           <div style={{
-            background: 'rgba(15, 23, 42, 0.95)',
-            border: '1px solid #00f0ff',
+            background: 'color-mix(in srgb, var(--panel) 95%, transparent)',
+            border: '1px solid var(--cyan)',
             borderRadius: '8px',
             padding: '8px 14px',
             marginBottom: '10px',
             display: 'flex',
             gap: '16px',
             fontSize: '0.8rem',
-            boxShadow: '0 0 16px rgba(0, 240, 255, 0.2)'
+            boxShadow: '0 0 16px color-mix(in srgb, var(--cyan) 20%, transparent)'
           }}>
-            <span>Day: <strong style={{ color: '#00f0ff' }}>{hoveredPoint.data.day}</strong></span>
-            <span>Risk Score: <strong style={{ color: hoveredPoint.data.predicted_risk_score > 75 ? '#ef4444' : hoveredPoint.data.predicted_risk_score > 50 ? '#f97316' : '#10b981' }}>
+            <span>Day: <strong style={{ color: 'var(--cyan)' }}>{hoveredPoint.data.day}</strong></span>
+            <span>Risk Score: <strong style={{ color: hoveredPoint.data.predicted_risk_score > 75 ? 'var(--lime)' : hoveredPoint.data.predicted_risk_score > 50 ? 'var(--orange)' : 'var(--cyan)' }}>
               {hoveredPoint.data.predicted_risk_score?.toFixed(1)}
             </strong></span>
-            <span>Band: <strong style={{ color: '#ffffff' }}>{hoveredPoint.data.predicted_risk_band}</strong></span>
+            <span>Band: <strong style={{ color: 'var(--text)' }}>{hoveredPoint.data.predicted_risk_band}</strong></span>
             <span>Tilt: <strong>{hoveredPoint.data.tilt_deg?.toFixed(2)}°</strong></span>
             <span>Strain: <strong>{hoveredPoint.data.strain_microstrain?.toFixed(0)} µε</strong></span>
           </div>
@@ -289,11 +289,11 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
 
         {/* Primary Chart: Risk Score with Shaded Zone Bands */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>
             Loading historical telemetry...
           </div>
         ) : (
-          renderLineChart(filteredData, 'predicted_risk_score', '#00f0ff', 240, 100, true)
+          renderLineChart(filteredData, 'predicted_risk_score', 'var(--cyan)', 240, 100, true)
         )}
       </div>
 
@@ -306,45 +306,45 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Tilt Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#00f0ff' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--cyan)' }}>
               Angular Tilt Telemetry (° deg)
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Weight: 30%</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
-          {renderLineChart(filteredData, 'tilt_deg', '#00f0ff', 140)}
+          {renderLineChart(filteredData, 'tilt_deg', 'var(--cyan)', 140)}
         </div>
 
         {/* Displacement Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#f59e0b' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--orange)' }}>
               Linear Displacement Telemetry (mm)
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Weight: 25%</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 25%</span>
           </div>
-          {renderLineChart(filteredData, 'displacement_mm', '#f59e0b', 140)}
+          {renderLineChart(filteredData, 'displacement_mm', 'var(--orange)', 140)}
         </div>
 
         {/* Strain Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#10b981' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--cyan)' }}>
               Structural Strain Telemetry (µε)
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Weight: 30%</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
-          {renderLineChart(filteredData, 'strain_microstrain', '#10b981', 140)}
+          {renderLineChart(filteredData, 'strain_microstrain', 'var(--cyan)', 140)}
         </div>
 
         {/* Vibration Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ec4899' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--violet)' }}>
               Vibration Velocity Telemetry (mm/s)
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Weight: 15%</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 15%</span>
           </div>
-          {renderLineChart(filteredData, 'vibration_mms', '#ec4899', 140)}
+          {renderLineChart(filteredData, 'vibration_mms', 'var(--violet)', 140)}
         </div>
       </div>
     </div>
