@@ -25,6 +25,7 @@ function go(path) { window.history.pushState({}, '', path); window.dispatchEvent
 
 function PageTransition({ page, children, hideHead = false }) {
   const root = useRef(null);
+  const routePath = page.path || window.location.pathname;
   useEffect(() => {
     const ctx = gsap.context(() => {
       const media = gsap.matchMedia();
@@ -43,8 +44,8 @@ function PageTransition({ page, children, hideHead = false }) {
       });
     }, root);
     return () => ctx.revert();
-  }, [page.id]);
-  return <div ref={root} className="route-frame" key={page.id}><div className="route-curtain"><div className="route-curtain-line" /></div>{!hideHead&&<div className="route-head"><div><div className="route-kicker section-label">{page.kicker}</div><h1 className="route-title">{page.title}</h1><p className="route-description">{page.description}</p></div><div className="route-index">{page.id === 'predictor' ? 'LIVE / 01' : page.id === 'historical' ? 'DATA / 02' : page.id === 'replay' ? 'TIME / 03' : 'FILE / 04'}</div></div>}<div className="route-content">{children}</div></div>;
+  }, [routePath]);
+  return <div ref={root} className="route-frame" key={routePath}><div className="route-curtain"><div className="route-curtain-line" /></div>{!hideHead&&<div className="route-head"><div><div className="route-kicker section-label">{page.kicker}</div><h1 className="route-title">{page.title}</h1><p className="route-description">{page.description}</p></div><div className="route-index">{page.id === 'predictor' ? 'LIVE / 01' : page.id === 'historical' ? 'DATA / 02' : page.id === 'replay' ? 'TIME / 03' : 'FILE / 04'}</div></div>}<div className="route-content">{children}</div></div>;
 }
 
 function MeshPreview() {
