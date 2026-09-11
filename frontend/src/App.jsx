@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Activity, ArrowUpRight, BarChart3, BellRing, ChevronRight, Cpu, Database, Download, Gauge, Home, Layers3, Menu, Network, Radar, Radio, Sparkles, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { gsap } from 'gsap';
 import KpiCardGrid from './components/KpiCardGrid';
 import MineNodeGrid from './components/MineNodeGrid';
@@ -35,8 +35,56 @@ function MeshPreview() {
   const links = [[0,1],[0,2],[1,3],[2,3],[2,4],[3,5],[4,5],[4,6],[5,7],[3,8],[7,9],[5,9]];
   return <div className="mesh-visual"><motion.div className="mesh-pulse" animate={{ scale: [.82,1.18,.82], opacity: [.2,.48,.2] }} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }} /><div className="mesh-orbit orbit-one" /><div className="mesh-orbit orbit-two" /><svg viewBox="0 0 100 100"><defs><linearGradient id="meshLine" x1="0" x2="1"><stop offset="0" stopColor="#b7ff4a" stopOpacity=".18" /><stop offset="1" stopColor="#46e7f2" stopOpacity=".6" /></linearGradient><filter id="nodeGlow"><feGaussianBlur stdDeviation="1.8" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>{links.map(([a,b]) => <line key={`${a}-${b}`} x1={points[a][0]} y1={points[a][1]} x2={points[b][0]} y2={points[b][1]} stroke="url(#meshLine)" strokeWidth=".45" />)}<circle cx="51" cy="53" r="11" fill="rgba(183,255,74,.08)" stroke="#b7ff4a" strokeOpacity=".55" strokeWidth=".3" /><path d="M51 44v18M42 53h18" stroke="#b7ff4a" strokeWidth=".45" />{points.map(([x,y],i) => <motion.circle key={`${x}-${y}`} cx={x} cy={y} r={i % 4 !== 2 ? 1.8 : 1.4} fill={i % 4 !== 2 ? '#b7ff4a' : '#ffab5c'} initial={{ opacity: .5 }} animate={{ opacity: [.5,1,.5] }} transition={{ duration: 1.8+(i%4)*.25, repeat: Infinity, delay: i*.09 }} />)}</svg><div className="mesh-label mesh-label-top"><span className="status-dot" /> LIVE NODE GRID</div><div className="mesh-label mesh-label-bottom">MINE PANEL A / 07:42:18 IST</div><div className="mesh-readout"><span>RSSI</span><strong>-62 dBm</strong><i /><span>PACKETS</span><strong>99.98%</strong></div></div>;
 }
-function InteractiveHero({ children }) { const root=useRef(null); const copy=useRef(null); const mesh=useRef(null); const spotlight=useRef(null); const scanline=useRef(null); useEffect(()=>{const ctx=gsap.context(()=>{const media=gsap.matchMedia();media.add('(prefers-reduced-motion: no-preference)',()=>{gsap.timeline({defaults:{ease:'power3.out'}}).from('.eyebrow',{y:14,opacity:0,duration:.35}).from('.hero-copy h1',{y:24,opacity:0,duration:.55},'-=.16').from('.hero-description',{y:16,opacity:0,duration:.38},'-=.28').from('.hero-actions, .hero-proof',{y:12,opacity:0,duration:.35,stagger:.08},'-=.2').from('.mesh-visual',{scale:.92,opacity:0,rotate:-4,duration:.75},'-=.55');const intro=gsap.timeline({repeat:-1,yoyo:true,defaults:{ease:'sine.inOut'}});intro.to(mesh.current,{rotate:1.5,duration:3}).to(spotlight.current,{scale:1.18,opacity:.5,duration:2.5},'<').to(scanline.current,{y:'110%',opacity:.8,duration:4.5,ease:'none'},0)});const onMove=e=>{const r=root.current.getBoundingClientRect();const x=((e.clientX-r.left)/r.width-.5)*18;const y=((e.clientY-r.top)/r.height-.5)*12;gsap.to(copy.current,{x:x*.18,y:y*.18,duration:.55,ease:'power3.out',overwrite:true});gsap.to(mesh.current,{x:-x*.65,y:-y*.65,duration:.7,ease:'power3.out',overwrite:true});gsap.to(spotlight.current,{x:x*1.3,y:y*1.3,duration:.9,ease:'power2.out',overwrite:true})};const onLeave=()=>{gsap.to([copy.current,mesh.current,spotlight.current],{x:0,y:0,rotate:0,duration:.7,ease:'power3.out',overwrite:true})};root.current.addEventListener('pointermove',onMove);root.current.addEventListener('pointerleave',onLeave);return()=>{root.current?.removeEventListener('pointermove',onMove);root.current?.removeEventListener('pointerleave',onLeave)}},root);return()=>ctx.revert()},[]); return <section ref={root} className="hero-section"><div ref={spotlight} className="hero-spotlight"/><div ref={copy} className="hero-copy">{children[0]}</div><div ref={mesh} className="hero-mesh-layer">{children[1]}</div><div ref={scanline} className="hero-scanline"/></section>; }
+function InteractiveHero({ children }) {
+  const root = useRef(null);
+  const copy = useRef(null);
+  const mesh = useRef(null);
+  const spotlight = useRef(null);
+  const scanline = useRef(null);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const springX = useSpring(pointerX, { stiffness: 120, damping: 24, mass: 0.65 });
+  const springY = useSpring(pointerY, { stiffness: 120, damping: 24, mass: 0.65 });
+  const copyX = useTransform(springX, [-18, 18], [-3.2, 3.2]);
+  const copyY = useTransform(springY, [-12, 12], [-2.2, 2.2]);
+  const meshX = useTransform(springX, [-18, 18], [11.7, -11.7]);
+  const meshY = useTransform(springY, [-12, 12], [7.8, -7.8]);
+  const spotlightX = useTransform(springX, [-18, 18], [-23.4, 23.4]);
+  const spotlightY = useTransform(springY, [-12, 12], [-15.6, 15.6]);
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.timeline({ defaults: { ease: 'power3.out' } })
+          .from('.eyebrow', { y: 14, opacity: 0, duration: .35 })
+          .from('.hero-copy h1', { y: 24, opacity: 0, duration: .55 }, '-=.16')
+          .from('.hero-description', { y: 16, opacity: 0, duration: .38 }, '-=.28')
+          .from('.hero-actions, .hero-proof', { y: 12, opacity: 0, duration: .35, stagger: .08 }, '-=.2')
+          .from('.mesh-visual', { scale: .92, opacity: 0, rotate: -4, duration: .75 }, '-=.55');
+        const intro = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: 'sine.inOut' } });
+        intro.to(mesh.current, { rotate: 1.5, duration: 3 })
+          .to(spotlight.current, { scale: 1.18, opacity: .5, duration: 2.5 }, '<')
+          .to(scanline.current, { y: '110%', opacity: .8, duration: 4.5, ease: 'none' }, 0);
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
+  const handlePointerMove = (event) => {
+    const bounds = root.current.getBoundingClientRect();
+    pointerX.set(((event.clientX - bounds.left) / bounds.width - .5) * 18);
+    pointerY.set(((event.clientY - bounds.top) / bounds.height - .5) * 12);
+  };
+  const resetPointer = () => { pointerX.set(0); pointerY.set(0); };
+
+  return <section ref={root} className="hero-section" onPointerMove={handlePointerMove} onPointerLeave={resetPointer}>
+    <motion.div className="hero-spotlight" style={{ x: spotlightX, y: spotlightY }} />
+    <motion.div className="hero-copy" style={{ x: copyX, y: copyY }}>{children[0]}</motion.div>
+    <motion.div className="hero-mesh-layer" style={{ x: meshX, y: meshY }}>{children[1]}</motion.div>
+    <div ref={scanline} className="hero-scanline" />
+  </section>;
+}
 function Sidebar({ page, mobileNav, setMobileNav }) { return <aside className={`sidebar ${mobileNav?'sidebar-open':''}`}><div className="brand-lockup"><div className="brand-mark"><span/><span/><span/></div><div><strong>carbonex</strong><small>ground intelligence</small></div></div><button className="mobile-close" onClick={()=>setMobileNav(false)} aria-label="Close navigation"><X size={20}/></button><div className="sidebar-kicker">Workspace</div><nav className="side-nav">{navItems.map(({id,path,label,icon:Icon})=><motion.button key={id} className={page.id===id?'nav-item active':'nav-item'} onClick={()=>{go(path);setMobileNav(false)}} whileHover={{ x: 2 }} whileTap={{ scale: .97 }}><Icon size={17}/><span>{label}</span>{page.id===id&&<motion.span layoutId="active-nav" className="nav-active-pill"/>}<ChevronRight size={15} className="nav-arrow"/></motion.button>)}</nav><div className="sidebar-spacer"/><div className="system-card"><div className="system-card-header"><span className="status-dot"/> SYSTEM NOMINAL</div><div className="system-card-value">99.98<span>%</span></div><div className="system-card-note">mesh availability / last 24h</div><div className="mini-bar"><i/></div></div><div className="sidebar-footer"><span>CARBONEX / 0.9.4</span><span className="env-pill">EDGE + CLOUD</span></div></aside>; }
 
 function LandingPage() { return <><InteractiveHero><div><div className="eyebrow"><span className="eyebrow-line"/> MINE PANEL A / RANIGANJ COALFIELD</div><h1>See the ground<br/><em>before it moves.</em></h1><p className="hero-description">Carbonex turns distributed sensing into an early-warning advantage. From the first millidegree of tilt to a field-ready alert.</p><div className="hero-actions"><Button className="primary-button" onClick={()=>go('/monitor')}>Open live workspace <ArrowUpRight size={16}/></Button><Button variant="ghost" className="text-button" onClick={()=>go('/analytics')}>Explore analytics <span>↗</span></Button></div><div className="hero-proof"><div><strong>24 / 7</strong><span>continuous sensing</span></div><div><strong>4.2 km</strong><span>mesh coverage</span></div><div><strong>6 min</strong><span>early signal window</span></div></div></div><MeshPreview/></InteractiveHero><section className="pipeline-strip"><div className="pipeline-intro"><span className="section-label">THE SIGNAL PATH</span><strong>One system.<br/>Every layer connected.</strong></div>{pipeline.map(({label,detail,icon:Icon,color},i)=><React.Fragment key={label}><div className={`pipeline-step ${color}`}><div className="pipeline-icon"><Icon size={17}/></div><div><span>0{i+1}</span><strong>{label}</strong><small>{detail}</small></div></div>{i<pipeline.length-1&&<div className="pipeline-connector"/>}</React.Fragment>)}<div className="pipeline-end"><Sparkles size={16}/><span>AI READY</span></div></section></>; }
