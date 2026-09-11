@@ -79,9 +79,9 @@ function InteractiveHero({ children }) {
   const resetPointer = () => { pointerX.set(0); pointerY.set(0); };
 
   return <section ref={root} className="hero-section" onPointerMove={handlePointerMove} onPointerLeave={resetPointer}>
-    <motion.div className="hero-spotlight" style={{ x: spotlightX, y: spotlightY }} />
-    <motion.div className="hero-copy" style={{ x: copyX, y: copyY }}>{children[0]}</motion.div>
-    <motion.div className="hero-mesh-layer" style={{ x: meshX, y: meshY }}>{children[1]}</motion.div>
+    <motion.div ref={spotlight} className="hero-spotlight" style={{ x: spotlightX, y: spotlightY }} />
+    <motion.div ref={copy} className="hero-copy" style={{ x: copyX, y: copyY }}>{children[0]}</motion.div>
+    <motion.div ref={mesh} className="hero-mesh-layer" style={{ x: meshX, y: meshY }}>{children[1]}</motion.div>
     <div ref={scanline} className="hero-scanline" />
   </section>;
 }

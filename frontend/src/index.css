@@ -1257,3 +1257,5 @@ h1 em {
   color: var(--cyan);
 }
 
+
+.hero-mesh-layer{display:block;position:relative;z-index:2;will-change:transform}
