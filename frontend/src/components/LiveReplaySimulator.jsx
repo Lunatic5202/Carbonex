@@ -121,7 +121,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
               padding: '10px 20px',
               color: 'var(--text)',
               fontWeight: '800',
-              fontSize: '0.9rem',
+              fontSize: '14px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -143,7 +143,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
               padding: '10px 14px',
               color: 'var(--text)',
               fontWeight: '700',
-              fontSize: '0.85rem',
+              fontSize: '14px',
               cursor: isPlaying ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -163,7 +163,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
               padding: '10px 14px',
               color: 'var(--text)',
               fontWeight: '700',
-              fontSize: '0.85rem',
+              fontSize: '14px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -177,7 +177,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
 
         {/* Speed multiplier selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: '700' }}>SPEED:</span>
+          <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: '700' }}>SPEED:</span>
           {[1, 2, 5, 10].map(s => (
             <button
               key={s}
@@ -189,7 +189,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
                 borderRadius: '6px',
                 padding: '5px 12px',
                 fontWeight: '800',
-                fontSize: '0.8rem',
+                fontSize: '13px',
                 cursor: 'pointer'
               }}
             >
@@ -210,8 +210,8 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
         }}>
           <Radio size={16} color={isPlaying ? 'var(--cyan)' : 'var(--muted)'} className={isPlaying ? 'pulse-dot' : ''} />
           <div>
-            <div style={{ fontSize: '0.68rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Simulation Timeline:</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--cyan)', fontFamily: 'Rajdhani, monospace' }}>
+            <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Simulation Timeline:</div>
+            <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--cyan)', }}>
               Day {currentDay} / 365
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
             borderBottom: '1px solid var(--line)',
             paddingBottom: '10px'
           }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+            <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
               Live Telemetry Stream • {activeNode}
             </h3>
             <span style={{
@@ -244,7 +244,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
               padding: '3px 10px',
               borderRadius: '999px',
               fontWeight: '800',
-              fontSize: '0.75rem'
+              fontSize: '12px'
             }}>
               {currentRecord.predicted_risk_band}
             </span>
@@ -302,26 +302,26 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
             textAlign: 'center'
           }}>
             <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>Tilt</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--cyan)', fontFamily: 'monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Tilt</div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
                 {currentRecord.tilt_deg?.toFixed(2)}°
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>Disp</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--orange)', fontFamily: 'monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Disp</div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--orange)', }}>
                 {currentRecord.displacement_mm?.toFixed(1)} mm
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>Strain</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--cyan)', fontFamily: 'monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Strain</div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
                 {currentRecord.strain_microstrain?.toFixed(0)} µε
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--muted)' }}>Vib</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--violet)', fontFamily: 'monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Vib</div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--violet)', }}>
                 {currentRecord.vibration_mms?.toFixed(2)} mm/s
               </div>
             </div>
@@ -340,11 +340,11 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <ShieldAlert size={18} color="var(--orange)" />
-              <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+              <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
                 Live Early-Warning Event Stream
               </h3>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
               {alerts.length} Events Logged
             </span>
           </div>
@@ -358,11 +358,11 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
             borderRadius: '8px'
           }}>
             {alerts.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)', fontSize: '0.85rem' }}>
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)', fontSize: '14px' }}>
                 Telemetry stable. No anomalous threshold exceedances recorded yet.
               </div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                 <thead>
                   <tr style={{ background: 'var(--panel)', color: 'var(--muted)', borderBottom: '1px solid var(--line)' }}>
                     <th style={{ padding: '8px 12px', textAlign: 'left' }}>Time / Day</th>
@@ -380,7 +380,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
                         background: a.band === 'CRITICAL' ? 'color-mix(in srgb, var(--lime) 10%, transparent)' : 'transparent'
                       }}
                     >
-                      <td style={{ padding: '8px 12px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                      <td style={{ padding: '8px 12px', color: 'var(--text)', }}>
                         Day {a.day} ({a.time})
                       </td>
                       <td style={{ padding: '8px 12px' }}>
@@ -391,14 +391,13 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
                           padding: '2px 8px',
                           borderRadius: '4px',
                           fontWeight: '800',
-                          fontSize: '0.7rem'
+                          fontSize: '11px'
                         }}>
                           {a.band}
                         </span>
                       </td>
                       <td style={{
                         padding: '8px 12px',
-                        fontFamily: 'monospace',
                         fontWeight: '800',
                         color: getStatusColor(a.band)
                       }}>

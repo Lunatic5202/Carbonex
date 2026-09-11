@@ -108,17 +108,16 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="pulse-dot" style={{ backgroundColor: prediction.status_color }} />
             <h2 style={{
-              fontSize: '1.05rem',
+              fontSize: '17px',
               fontWeight: '800',
               color: 'var(--text)',
-              fontFamily: 'Rajdhani, sans-serif',
               letterSpacing: '0.04em',
               margin: 0
             }}>
               LIVE GEOTECHNICAL SPEEDOMETERS & TELEMETRY GAUGES
             </h2>
           </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '13px', color: 'var(--muted)' }}>
             Node: <strong style={{ color: 'var(--cyan)' }}>{activeNode}</strong> • 3-Layer Isolation Forest & Sensor Fusion
           </div>
         </div>
@@ -221,17 +220,17 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Sliders size={20} color="var(--cyan)" />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
                 Sensor Simulation & What-If Sliders
               </h3>
             </div>
-            {loading && <span style={{ fontSize: '0.75rem', color: 'var(--cyan)' }}>Predicting...</span>}
+            {loading && <span style={{ fontSize: '12px', color: 'var(--cyan)' }}>Predicting...</span>}
           </div>
 
           {/* Preset Buttons (Matching Image 2 Charger/Output priority buttons) */}
           <div style={{ marginBottom: '22px' }}>
             <label style={{
-              fontSize: '0.75rem',
+              fontSize: '12px',
               fontWeight: '700',
               color: 'var(--muted)',
               textTransform: 'uppercase',
@@ -268,10 +267,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <span style={{ fontSize: '0.82rem', fontWeight: '700', color: p.color }}>
+                  <span style={{ fontSize: '13px', fontWeight: '700', color: p.color }}>
                     {p.name}
                   </span>
-                  <span style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: '2px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
                     Click to load telemetry
                   </span>
                 </button>
@@ -284,10 +283,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             {/* Slider 1: Angular Tilt */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text)' }}>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
                   Angular Tilt (tilt_deg)
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--cyan)', fontWeight: '700' }}>
+                <span style={{ color: 'var(--cyan)', fontWeight: '700' }}>
                   {readings.tilt_deg.toFixed(2)} °
                 </span>
               </div>
@@ -299,7 +298,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                 value={readings.tilt_deg}
                 onChange={e => handleSliderChange('tilt_deg', e.target.value)}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0° (Baseline)</span>
                 <span>Weight: 30%</span>
                 <span>10.0° (Hazard)</span>
@@ -309,10 +308,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             {/* Slider 2: Linear Displacement */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text)' }}>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
                   Linear Displacement (displacement_mm)
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--orange)', fontWeight: '700' }}>
+                <span style={{ color: 'var(--orange)', fontWeight: '700' }}>
                   {readings.displacement_mm.toFixed(1)} mm
                 </span>
               </div>
@@ -324,7 +323,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                 value={readings.displacement_mm}
                 onChange={e => handleSliderChange('displacement_mm', e.target.value)}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0 mm</span>
                 <span>Weight: 25%</span>
                 <span>60.0 mm</span>
@@ -334,10 +333,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             {/* Slider 3: Structural Strain */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text)' }}>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
                   Structural Strain (strain_microstrain)
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--cyan)', fontWeight: '700' }}>
+                <span style={{ color: 'var(--cyan)', fontWeight: '700' }}>
                   {readings.strain_microstrain.toFixed(0)} µε
                 </span>
               </div>
@@ -349,7 +348,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                 value={readings.strain_microstrain}
                 onChange={e => handleSliderChange('strain_microstrain', e.target.value)}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0 µε</span>
                 <span>Weight: 30%</span>
                 <span>2000 µε</span>
@@ -359,10 +358,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             {/* Slider 4: Vibration Velocity */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text)' }}>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
                   Vibration Velocity (vibration_mms)
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--violet)', fontWeight: '700' }}>
+                <span style={{ color: 'var(--violet)', fontWeight: '700' }}>
                   {readings.vibration_mms.toFixed(2)} mm/s
                 </span>
               </div>
@@ -374,7 +373,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                 value={readings.vibration_mms}
                 onChange={e => handleSliderChange('vibration_mms', e.target.value)}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0 mm/s</span>
                 <span>Weight: 15%</span>
                 <span>10.0 mm/s</span>
@@ -396,7 +395,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Cpu size={20} color={prediction.status_color} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
                 Model Prediction & Geotechnical Diagnostics
               </h3>
             </div>
@@ -407,7 +406,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
               padding: '3px 10px',
               borderRadius: '999px',
               fontWeight: '800',
-              fontSize: '0.75rem'
+              fontSize: '12px'
             }}>
               {prediction.risk_band}
             </span>
@@ -426,9 +425,8 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             boxShadow: `0 8px 24px ${prediction.status_color}22`
           }}>
             <div style={{
-              fontSize: '3.6rem',
+              fontSize: '58px',
               fontWeight: '900',
-              fontFamily: 'Rajdhani, sans-serif',
               color: prediction.status_color,
               lineHeight: 1,
               textShadow: `0 0 20px ${prediction.status_color}88`
@@ -437,14 +435,14 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             </div>
             <div>
               <div style={{
-                fontSize: '1.25rem',
+                fontSize: '20px',
                 fontWeight: '800',
                 color: prediction.status_color,
                 letterSpacing: '0.04em'
               }}>
                 {prediction.risk_band} STATUS
               </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text)', marginTop: '3px' }}>
+              <div style={{ fontSize: '14px', color: 'var(--text)', marginTop: '3px' }}>
                 Primary Driver: <strong style={{ color: 'var(--text)' }}>{prediction.primary_driver}</strong>
                 {prediction.driver_contribution_pct > 0 && ` (${prediction.driver_contribution_pct.toFixed(0)}% contribution)`}
               </div>
@@ -460,18 +458,18 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             marginBottom: '18px',
             flexGrow: 1
           }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
               Diagnostic Assessment:
             </div>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text)', lineHeight: '1.45', marginBottom: '14px' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text)', lineHeight: '1.45', marginBottom: '14px' }}>
               {prediction.summary}
             </p>
 
-            <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
               Recommended Engineering Action:
             </div>
             <p style={{
-              fontSize: '0.88rem',
+              fontSize: '14px',
               color: prediction.risk_band === 'CRITICAL' ? 'var(--lime)' : prediction.risk_band === 'WARNING' ? 'var(--orange)' : 'var(--cyan)',
               fontWeight: '700',
               lineHeight: '1.45'
@@ -487,15 +485,15 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             borderRadius: '10px',
             padding: '14px 16px'
           }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '10px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '10px' }}>
               Layer 1 Isolation Forest Anomaly Scores (0.0 - 1.0):
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
               {Object.entries(prediction.sensor_scores || {}).map(([sensor, score]) => (
                 <div key={sensor}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '3px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '3px' }}>
                     <span style={{ color: 'var(--muted)' }}>{sensor.split('_')[0]}</span>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', color: score > 0.5 ? 'var(--orange)' : 'var(--cyan)', fontWeight: '700' }}>
+                    <span style={{ color: score > 0.5 ? 'var(--orange)' : 'var(--cyan)', fontWeight: '700' }}>
                       {score.toFixed(3)}
                     </span>
                   </div>

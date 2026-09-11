@@ -168,49 +168,49 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         marginBottom: '20px'
       }}>
         <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--cyan)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
+          <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Historical Peak Risk
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: maxRisk > 75 ? 'var(--lime)' : maxRisk > 50 ? 'var(--orange)' : 'var(--cyan)', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '29px', fontWeight: '900', color: maxRisk > 75 ? 'var(--lime)' : maxRisk > 50 ? 'var(--orange)' : 'var(--cyan)', }}>
             {maxRisk.toFixed(1)} / 100
           </div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Across {filteredData.length} observation days
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--lime)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
+          <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Critical Hazards
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: criticalCount > 0 ? 'var(--lime)' : 'var(--cyan)', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '29px', fontWeight: '900', color: criticalCount > 0 ? 'var(--lime)' : 'var(--cyan)', }}>
             {criticalCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Risk Score &gt; 75.0 (Emergency)
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
+          <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Warning Progression
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--orange)', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
             {warningCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Deformation Acceleration &gt; 50.0
           </div>
         </div>
 
         <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
+          <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Watch Drift
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--orange)', fontFamily: 'Rajdhani, sans-serif' }}>
+          <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
             {watchCount} Days
           </div>
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Early Telemetry Deviation
           </div>
         </div>
@@ -230,17 +230,17 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
           paddingBottom: '12px'
         }}>
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
               Calibrated Subsidence Risk Progression (365 Days)
             </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', margin: '2px 0 0 0' }}>
+            <p style={{ fontSize: '12px', color: 'var(--muted)', margin: '2px 0 0 0' }}>
               4-Tier Domain Zones: Normal (0-25), Watch (26-50), Warning (51-75), Critical (76-100)
             </p>
           </div>
 
           {/* Day range scrubber */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: '600' }}>FILTER DAYS:</span>
+            <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: '600' }}>FILTER DAYS:</span>
             <input
               type="range"
               min="1"
@@ -250,9 +250,8 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
               style={{ width: '160px' }}
             />
             <span style={{
-              fontFamily: 'JetBrains Mono, monospace',
               color: 'var(--cyan)',
-              fontSize: '0.8rem',
+              fontSize: '13px',
               fontWeight: '700',
               background: 'var(--bg)',
               padding: '2px 8px',
@@ -274,7 +273,7 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             marginBottom: '10px',
             display: 'flex',
             gap: '16px',
-            fontSize: '0.8rem',
+            fontSize: '13px',
             boxShadow: '0 0 16px color-mix(in srgb, var(--cyan) 20%, transparent)'
           }}>
             <span>Day: <strong style={{ color: 'var(--cyan)' }}>{hoveredPoint.data.day}</strong></span>
@@ -306,10 +305,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Tilt Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--cyan)' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--cyan)' }}>
               Angular Tilt Telemetry (° deg)
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 30%</span>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
           {renderLineChart(filteredData, 'tilt_deg', 'var(--cyan)', 140)}
         </div>
@@ -317,10 +316,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Displacement Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--orange)' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--orange)' }}>
               Linear Displacement Telemetry (mm)
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 25%</span>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 25%</span>
           </div>
           {renderLineChart(filteredData, 'displacement_mm', 'var(--orange)', 140)}
         </div>
@@ -328,10 +327,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Strain Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--cyan)' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--cyan)' }}>
               Structural Strain Telemetry (µε)
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 30%</span>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
           {renderLineChart(filteredData, 'strain_microstrain', 'var(--cyan)', 140)}
         </div>
@@ -339,10 +338,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         {/* Vibration Chart */}
         <div className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--violet)' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--violet)' }}>
               Vibration Velocity Telemetry (mm/s)
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Weight: 15%</span>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 15%</span>
           </div>
           {renderLineChart(filteredData, 'vibration_mms', 'var(--violet)', 140)}
         </div>

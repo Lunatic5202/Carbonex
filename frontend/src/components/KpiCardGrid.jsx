@@ -134,7 +134,7 @@ export default function KpiCardGrid({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{
-                  fontSize: '0.72rem',
+                  fontSize: '12px',
                   fontWeight: '700',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
@@ -142,7 +142,7 @@ export default function KpiCardGrid({
                 }}>
                   {card.label}
                 </div>
-                <div style={{ fontSize: '0.68rem', opacity: 0.75, marginTop: '1px' }}>
+                <div style={{ fontSize: '11px', opacity: 0.75, marginTop: '1px' }}>
                   {card.sublabel}
                 </div>
               </div>
@@ -163,9 +163,8 @@ export default function KpiCardGrid({
 
             {/* Middle row: Big Bold Value */}
             <div style={{
-              fontSize: '2.3rem',
+              fontSize: '37px',
               fontWeight: '900',
-              fontFamily: 'Rajdhani, Inter, sans-serif',
               lineHeight: 1.1,
               marginTop: '12px',
               marginBottom: '8px',
@@ -194,7 +193,7 @@ export default function KpiCardGrid({
               backdropFilter: 'blur(4px)',
               padding: '3px 10px',
               borderRadius: '999px',
-              fontSize: '0.72rem',
+              fontSize: '12px',
               fontWeight: '700',
               letterSpacing: '0.04em',
               alignSelf: 'flex-start'

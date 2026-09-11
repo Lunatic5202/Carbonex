@@ -45,11 +45,11 @@ export default function MineNodeGrid({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <HardHat size={20} color="#00f0ff" />
-          <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+          <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff', margin: 0 }}>
             Underground Coal Mine Sensor Nodes • Spatial Mesh Grid
           </h3>
         </div>
-        <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+        <span style={{ fontSize: '12px', color: '#94a3b8' }}>
           Self-Healing LoRa Mesh • {nodesSummary.length} Monitored Panels
         </span>
       </div>
@@ -89,10 +89,9 @@ export default function MineNodeGrid({
               {/* Top Row: Node ID & Status Pill */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{
-                  fontSize: '0.95rem',
+                  fontSize: '15px',
                   fontWeight: '800',
                   color: isSelected ? '#00f0ff' : '#ffffff',
-                  fontFamily: 'Rajdhani, sans-serif'
                 }}>
                   {node.node_id}
                 </span>
@@ -100,7 +99,7 @@ export default function MineNodeGrid({
                   background: `${bandColor}22`,
                   border: `1px solid ${bandColor}`,
                   color: bandColor,
-                  fontSize: '0.68rem',
+                  fontSize: '11px',
                   fontWeight: '800',
                   padding: '2px 6px',
                   borderRadius: '4px'
@@ -112,15 +111,14 @@ export default function MineNodeGrid({
               {/* Risk Score */}
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '8px' }}>
                 <span style={{
-                  fontSize: '1.6rem',
+                  fontSize: '26px',
                   fontWeight: '900',
                   color: bandColor,
-                  fontFamily: 'Rajdhani, monospace',
                   lineHeight: 1
                 }}>
                   {node.risk_score?.toFixed(1)}
                 </span>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>/ 100 Risk</span>
+                <span style={{ fontSize: '11px', color: '#64748b' }}>/ 100 Risk</span>
               </div>
 
               {/* Telemetry Snapshot */}
@@ -128,7 +126,7 @@ export default function MineNodeGrid({
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
                 gap: '4px',
-                fontSize: '0.7rem',
+                fontSize: '11px',
                 color: '#94a3b8',
                 borderTop: '1px solid #161e32',
                 paddingTop: '8px'

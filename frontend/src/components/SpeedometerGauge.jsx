@@ -51,7 +51,7 @@ export default function SpeedometerGauge({
         alignItems: 'center',
         gap: '6px',
         marginBottom: '6px',
-        fontSize: '0.8rem',
+        fontSize: '13px',
         fontWeight: '600',
         color: '#94a3b8',
         textTransform: 'uppercase',
@@ -145,17 +145,16 @@ export default function SpeedometerGauge({
           pointerEvents: 'none'
         }}>
           <div style={{
-            fontSize: size > 160 ? '1.85rem' : '1.5rem',
+            fontSize: size > 160 ? '30px' : '24px',
             fontWeight: '800',
             color: color,
-            fontFamily: 'Rajdhani, Inter, sans-serif',
             lineHeight: '1.1',
             textShadow: `0 0 12px ${color}66`
           }}>
             {typeof value === 'number' ? (Number.isInteger(value) ? value : value.toFixed(value > 10 ? 1 : 2)) : value}
           </div>
           <div style={{
-            fontSize: '0.72rem',
+            fontSize: '12px',
             color: '#94a3b8',
             fontWeight: '600',
             textTransform: 'uppercase',
@@ -175,7 +174,7 @@ export default function SpeedometerGauge({
           backgroundColor: `${color}22`,
           border: `1px solid ${color}66`,
           color: color,
-          fontSize: '0.72rem',
+          fontSize: '12px',
           fontWeight: '700',
           letterSpacing: '0.05em'
         }}>

@@ -96,11 +96,11 @@ export default function BatchCsvScorer() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <FileSpreadsheet size={22} color="var(--cyan)" />
-            <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
               Batch CSV Scorer & High-Throughput Model Ingestion
             </h3>
           </div>
-          <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>
+          <span style={{ fontSize: '13px', color: 'var(--muted)' }}>
             Engine: 3-Layer Unsupervised Isolation Forest Pipeline
           </span>
         </div>
@@ -121,10 +121,10 @@ export default function BatchCsvScorer() {
             cursor: 'pointer'
           }}>
             <Upload size={32} color="var(--cyan)" style={{ margin: '0 auto 8px auto' }} />
-            <p style={{ fontSize: '0.9rem', color: 'var(--text)', fontWeight: '600', marginBottom: '4px' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text)', fontWeight: '600', marginBottom: '4px' }}>
               {file ? file.name : 'Select or Drop CSV Sensor Telemetry File'}
             </p>
-            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: '12px' }}>
+            <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '12px' }}>
               Requires columns: node_id, day, tilt_deg, displacement_mm, strain_microstrain, vibration_mms
             </p>
             <input
@@ -141,7 +141,7 @@ export default function BatchCsvScorer() {
                 color: 'var(--text)',
                 padding: '6px 14px',
                 borderRadius: '6px',
-                fontSize: '0.8rem',
+                fontSize: '13px',
                 fontWeight: '700',
                 cursor: 'pointer',
                 border: '1px solid var(--line)'
@@ -163,7 +163,7 @@ export default function BatchCsvScorer() {
                 borderRadius: '8px',
                 padding: '12px 20px',
                 fontWeight: '800',
-                fontSize: '0.9rem',
+                fontSize: '14px',
                 cursor: file && !loading ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
@@ -186,7 +186,7 @@ export default function BatchCsvScorer() {
                 borderRadius: '8px',
                 padding: '12px 20px',
                 fontWeight: '800',
-                fontSize: '0.9rem',
+                fontSize: '14px',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -211,29 +211,29 @@ export default function BatchCsvScorer() {
             marginBottom: '20px'
           }}>
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Total Records Evaluated</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--cyan)', fontFamily: 'Rajdhani, monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Total Records Evaluated</div>
+              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
                 {batchResult.total_rows?.toLocaleString()}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Normal Nominal Rows</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--cyan)', fontFamily: 'Rajdhani, monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Normal Nominal Rows</div>
+              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
                 {batchResult.band_counts?.NORMAL || 0}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Watch / Warning Rows</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--orange)', fontFamily: 'Rajdhani, monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Watch / Warning Rows</div>
+              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
                 {(batchResult.band_counts?.WATCH || 0) + (batchResult.band_counts?.WARNING || 0)}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase' }}>Critical Hazard Rows</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--lime)', fontFamily: 'Rajdhani, monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Critical Hazard Rows</div>
+              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--lime)', }}>
                 {batchResult.band_counts?.CRITICAL || 0}
               </div>
             </div>
@@ -260,7 +260,7 @@ export default function BatchCsvScorer() {
                     border: 'none',
                     borderRadius: '6px',
                     padding: '4px 12px',
-                    fontSize: '0.75rem',
+                    fontSize: '12px',
                     fontWeight: '800',
                     cursor: 'pointer'
                   }}
@@ -291,7 +291,7 @@ export default function BatchCsvScorer() {
                     background: 'transparent',
                     border: 'none',
                     color: 'var(--text)',
-                    fontSize: '0.8rem',
+                    fontSize: '13px',
                     outline: 'none',
                     width: '130px'
                   }}
@@ -307,7 +307,7 @@ export default function BatchCsvScorer() {
                   borderRadius: '6px',
                   padding: '6px 14px',
                   fontWeight: '700',
-                  fontSize: '0.8rem',
+                  fontSize: '13px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
@@ -328,7 +328,7 @@ export default function BatchCsvScorer() {
             borderRadius: '8px',
             maxHeight: '440px'
           }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead>
                 <tr style={{ background: 'var(--panel)', color: 'var(--muted)', borderBottom: '1px solid var(--line)' }}>
                   <th style={{ padding: '10px 14px', textAlign: 'left' }}>Node</th>
@@ -350,28 +350,27 @@ export default function BatchCsvScorer() {
                       background: row.predicted_risk_band === 'CRITICAL' ? 'color-mix(in srgb, var(--lime) 8%, transparent)' : 'transparent'
                     }}
                   >
-                    <td style={{ padding: '8px 14px', color: 'var(--cyan)', fontWeight: '700', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--cyan)', fontWeight: '700', }}>
                       {row.node_id}
                     </td>
-                    <td style={{ padding: '8px 14px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--text)', }}>
                       {row.day}
                     </td>
-                    <td style={{ padding: '8px 14px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--text)', }}>
                       {row.tilt_deg?.toFixed(2)}
                     </td>
-                    <td style={{ padding: '8px 14px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--text)', }}>
                       {row.displacement_mm?.toFixed(1)}
                     </td>
-                    <td style={{ padding: '8px 14px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--text)', }}>
                       {row.strain_microstrain?.toFixed(0)}
                     </td>
-                    <td style={{ padding: '8px 14px', color: 'var(--text)', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '8px 14px', color: 'var(--text)', }}>
                       {row.vibration_mms?.toFixed(2)}
                     </td>
                     <td style={{
                       padding: '8px 14px',
                       fontWeight: '800',
-                      fontFamily: 'monospace',
                       color: getStatusColor(row.predicted_risk_band)
                     }}>
                       {row.predicted_risk_score?.toFixed(1)}
@@ -384,7 +383,7 @@ export default function BatchCsvScorer() {
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontWeight: '800',
-                        fontSize: '0.72rem'
+                        fontSize: '12px'
                       }}>
                         {row.predicted_risk_band}
                       </span>
