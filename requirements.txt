@@ -1,0 +1,8 @@
+dash
+flask
+flask-cors
+joblib
+numpy
+pandas
+plotly
+scikit-learn
