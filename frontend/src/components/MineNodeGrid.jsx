@@ -40,16 +40,16 @@ export default function MineNodeGrid({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '16px',
-        borderBottom: '1px solid #1e293b',
+        borderBottom: '1px solid var(--line)',
         paddingBottom: '10px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <HardHat size={20} color="#00f0ff" />
-          <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+          <HardHat size={20} color="var(--cyan)" />
+          <h3 style={{ fontSize: '17px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
             Underground Coal Mine Sensor Nodes • Spatial Mesh Grid
           </h3>
         </div>
-        <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+        <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
           Self-Healing LoRa Mesh • {nodesSummary.length} Monitored Panels
         </span>
       </div>
@@ -61,7 +61,7 @@ export default function MineNodeGrid({
       }}>
         {nodesSummary.map((node) => {
           const isSelected = selectedNode === node.node_id;
-          const bandColor = node.status_color || '#10b981';
+          const bandColor = node.status_color || 'var(--cyan)';
 
           return (
             <div
@@ -69,8 +69,8 @@ export default function MineNodeGrid({
               className="mine-node-card"
               onClick={() => onSelectNode(node.node_id)}
               style={{
-                background: isSelected ? 'rgba(0, 240, 255, 0.08)' : '#0d1322',
-                border: isSelected ? '2px solid #00f0ff' : '1px solid #1e293b',
+                background: isSelected ? 'color-mix(in srgb, var(--cyan) 8%, transparent)' : 'var(--panel)',
+                border: isSelected ? '2px solid var(--cyan)' : '1px solid var(--line)',
                 borderRadius: '10px',
                 padding: '14px',
                 cursor: 'pointer',
@@ -80,10 +80,10 @@ export default function MineNodeGrid({
                 boxShadow: isSelected ? '0 0 16px rgba(0, 240, 255, 0.25)' : 'none'
               }}
               onMouseEnter={e => {
-                if (!isSelected) e.currentTarget.style.borderColor = '#334155';
+                if (!isSelected) e.currentTarget.style.borderColor = 'var(--line)';
               }}
               onMouseLeave={e => {
-                if (!isSelected) e.currentTarget.style.borderColor = '#1e293b';
+                if (!isSelected) e.currentTarget.style.borderColor = 'var(--line)';
               }}
             >
               {/* Top Row: Node ID & Status Pill */}
@@ -91,7 +91,7 @@ export default function MineNodeGrid({
                 <span style={{
                   fontSize: '15px',
                   fontWeight: '800',
-                  color: isSelected ? '#00f0ff' : '#ffffff',
+                  color: isSelected ? 'var(--cyan)' : 'var(--text)',
                 }}>
                   {node.node_id}
                 </span>
@@ -118,7 +118,7 @@ export default function MineNodeGrid({
                 }}>
                   {node.risk_score?.toFixed(1)}
                 </span>
-                <span style={{ fontSize: '11px', color: '#64748b' }}>/ 100 Risk</span>
+                <span style={{ fontSize: '11px', color: 'var(--muted)' }}>/ 100 Risk</span>
               </div>
 
               {/* Telemetry Snapshot */}
@@ -127,14 +127,14 @@ export default function MineNodeGrid({
                 gridTemplateColumns: 'repeat(2, 1fr)',
                 gap: '4px',
                 fontSize: '11px',
-                color: '#94a3b8',
-                borderTop: '1px solid #161e32',
+                color: 'var(--muted)',
+                borderTop: '1px solid var(--line)',
                 paddingTop: '8px'
               }}>
-                <div>Tilt: <strong style={{ color: '#e2e8f0' }}>{node.tilt_deg?.toFixed(1)}°</strong></div>
-                <div>Disp: <strong style={{ color: '#e2e8f0' }}>{node.displacement_mm?.toFixed(0)}mm</strong></div>
-                <div>Strain: <strong style={{ color: '#e2e8f0' }}>{node.strain_microstrain?.toFixed(0)}µε</strong></div>
-                <div>Vib: <strong style={{ color: '#e2e8f0' }}>{node.vibration_mms?.toFixed(2)}</strong></div>
+                <div>Tilt: <strong style={{ color: 'var(--text)' }}>{node.tilt_deg?.toFixed(1)}°</strong></div>
+                <div>Disp: <strong style={{ color: 'var(--text)' }}>{node.displacement_mm?.toFixed(0)}mm</strong></div>
+                <div>Strain: <strong style={{ color: 'var(--text)' }}>{node.strain_microstrain?.toFixed(0)}µε</strong></div>
+                <div>Vib: <strong style={{ color: 'var(--text)' }}>{node.vibration_mms?.toFixed(2)}</strong></div>
               </div>
             </div>
           );

@@ -10,8 +10,8 @@ export default function SpeedometerGauge({
   max = 100,
   label = '',
   unit = '',
-  color = '#00f0ff',
-  trackColor = '#1a2234',
+  color = 'var(--cyan)',
+  trackColor = 'var(--panel-2)',
   size = 180,
   statusDot = null,
   showNeedle = true,
@@ -53,7 +53,7 @@ export default function SpeedometerGauge({
         marginBottom: '6px',
         fontSize: '13px',
         fontWeight: '600',
-        color: '#94a3b8',
+        color: 'var(--muted)',
         textTransform: 'uppercase',
         letterSpacing: '0.05em'
       }}>
@@ -122,15 +122,15 @@ export default function SpeedometerGauge({
                 filter={`url(#glow-${label.replace(/\s+/g, '')})`}
                 style={{ transition: 'all 0.5s ease-out' }}
               />
-              <circle cx={cx} cy={cy} r="4" fill="#ffffff" />
+              <circle cx={cx} cy={cy} r="4" fill="var(--text)" />
             </g>
           )}
 
           {/* Min and Max endpoint markers */}
-          <text x={cx - radius + 2} y={cy + 18} fill="#64748b" fontSize="10" fontWeight="600" textAnchor="middle">
+          <text x={cx - radius + 2} y={cy + 18} fill="var(--muted)" fontSize="10" fontWeight="600" textAnchor="middle">
             {min}
           </text>
-          <text x={cx + radius - 2} y={cy + 18} fill="#64748b" fontSize="10" fontWeight="600" textAnchor="middle">
+          <text x={cx + radius - 2} y={cy + 18} fill="var(--muted)" fontSize="10" fontWeight="600" textAnchor="middle">
             {max}
           </text>
         </svg>
@@ -155,7 +155,7 @@ export default function SpeedometerGauge({
           </div>
           <div style={{
             fontSize: '12px',
-            color: '#94a3b8',
+            color: 'var(--muted)',
             fontWeight: '600',
             textTransform: 'uppercase',
             marginTop: '2px'

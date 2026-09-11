@@ -29,8 +29,8 @@ export default function KpiCardGrid({
       sublabel: 'Nominal Baseline',
       value: `${((normalNodes / totalNodes) * 100).toFixed(1)}%`,
       badge: `${normalNodes}/${totalNodes} Nodes`,
-      bgGradient: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-      textColor: '#ffffff',
+      bgGradient: 'linear-gradient(135deg, var(--cyan) 0%, var(--lime) 100%)',
+      textColor: 'var(--text)',
       icon: ShieldCheck,
       shadow: '0 8px 20px rgba(16, 185, 129, 0.35)'
     },
@@ -39,8 +39,8 @@ export default function KpiCardGrid({
       sublabel: 'Annual Observations',
       value: '109,253',
       badge: '365 Days Online',
-      bgGradient: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
-      textColor: '#ffffff',
+      bgGradient: 'linear-gradient(135deg, var(--cyan) 0%, var(--lime) 100%)',
+      textColor: 'var(--text)',
       icon: Activity,
       shadow: '0 8px 20px rgba(59, 130, 246, 0.35)'
     },
@@ -49,8 +49,8 @@ export default function KpiCardGrid({
       sublabel: 'Early Drift Telemetry',
       value: watchNodes.toString(),
       badge: watchNodes > 0 ? 'Sampling x2' : 'Clear',
-      bgGradient: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
-      textColor: '#ffffff',
+      bgGradient: 'linear-gradient(135deg, var(--orange) 0%, var(--alert) 100%)',
+      textColor: 'var(--text)',
       icon: AlertTriangle,
       shadow: '0 8px 20px rgba(245, 158, 11, 0.35)'
     },
@@ -59,8 +59,8 @@ export default function KpiCardGrid({
       sublabel: 'Accelerated Drift',
       value: warningNodes.toString(),
       badge: warningNodes > 0 ? 'Inspection Due' : 'Zero',
-      bgGradient: 'linear-gradient(135deg, #ea580c 0%, #f97316 100%)',
-      textColor: '#ffffff',
+      bgGradient: 'linear-gradient(135deg, var(--orange) 0%, var(--alert) 100%)',
+      textColor: 'var(--text)',
       icon: Layers,
       shadow: '0 8px 20px rgba(249, 115, 22, 0.35)'
     },
@@ -70,9 +70,9 @@ export default function KpiCardGrid({
       value: criticalNodes.toString(),
       badge: criticalNodes > 0 ? 'EVACUATE' : 'Nominal (0)',
       bgGradient: criticalNodes > 0 
-        ? 'linear-gradient(135deg, #b91c1c 0%, #ef4444 100%)' 
-        : 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)',
-      textColor: '#ffffff',
+        ? 'linear-gradient(135deg, var(--alert) 0%, var(--orange) 100%)' 
+        : 'linear-gradient(135deg, var(--orange) 0%, var(--alert) 100%)',
+      textColor: 'var(--text)',
       icon: Flame,
       shadow: '0 8px 20px rgba(239, 68, 68, 0.35)'
     }
@@ -157,7 +157,7 @@ export default function KpiCardGrid({
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <IconComponent size={18} color="#ffffff" />
+                <IconComponent size={18} color="var(--text)" />
               </motion.div>
             </div>
 
