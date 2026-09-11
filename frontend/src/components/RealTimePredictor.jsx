@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SpeedometerGauge from './SpeedometerGauge';
+import { Slider } from './ui/slider';
 import { Sliders, Shield, AlertTriangle, CheckCircle, Info, RefreshCw, Cpu } from 'lucide-react';
 
 export default function RealTimePredictor({ activeNode = 'Node01' }) {
@@ -290,14 +291,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                   {readings.tilt_deg.toFixed(2)} °
                 </span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                step="0.05"
-                value={readings.tilt_deg}
-                onChange={e => handleSliderChange('tilt_deg', e.target.value)}
-              />
+              <Slider min={0} max={10} step={0.05} value={[readings.tilt_deg]} onValueChange={value => handleSliderChange('tilt_deg', value[0])} aria-label="Angular tilt" />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0° (Baseline)</span>
                 <span>Weight: 30%</span>
@@ -315,14 +309,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                   {readings.displacement_mm.toFixed(1)} mm
                 </span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="60"
-                step="0.5"
-                value={readings.displacement_mm}
-                onChange={e => handleSliderChange('displacement_mm', e.target.value)}
-              />
+              <Slider min={0} max={60} step={0.5} value={[readings.displacement_mm]} onValueChange={value => handleSliderChange('displacement_mm', value[0])} aria-label="Linear displacement" />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0 mm</span>
                 <span>Weight: 25%</span>
@@ -340,14 +327,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                   {readings.strain_microstrain.toFixed(0)} µε
                 </span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="2000"
-                step="10"
-                value={readings.strain_microstrain}
-                onChange={e => handleSliderChange('strain_microstrain', e.target.value)}
-              />
+              <Slider min={0} max={2000} step={10} value={[readings.strain_microstrain]} onValueChange={value => handleSliderChange('strain_microstrain', value[0])} aria-label="Structural strain" />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0 µε</span>
                 <span>Weight: 30%</span>
@@ -365,14 +345,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
                   {readings.vibration_mms.toFixed(2)} mm/s
                 </span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                step="0.05"
-                value={readings.vibration_mms}
-                onChange={e => handleSliderChange('vibration_mms', e.target.value)}
-              />
+              <Slider min={0} max={10} step={0.05} value={[readings.vibration_mms]} onValueChange={value => handleSliderChange('vibration_mms', value[0])} aria-label="Vibration velocity" />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
                 <span>0.0 mm/s</span>
                 <span>Weight: 15%</span>

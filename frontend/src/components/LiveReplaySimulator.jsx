@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SpeedometerGauge from './SpeedometerGauge';
+import { Slider } from './ui/slider';
 import { Play, Pause, SkipForward, RotateCcw, AlertTriangle, Radio, ShieldAlert } from 'lucide-react';
 
 export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
@@ -178,24 +179,8 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
         {/* Speed multiplier selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: '700' }}>SPEED:</span>
-          {[1, 2, 5, 10].map(s => (
-            <button
-              key={s}
-              onClick={() => setSpeed(s)}
-              style={{
-                background: speed === s ? 'var(--cyan)' : 'var(--panel)',
-                color: speed === s ? 'var(--bg)' : 'var(--text)',
-                border: speed === s ? '1px solid var(--cyan)' : '1px solid var(--line)',
-                borderRadius: '6px',
-                padding: '5px 12px',
-                fontWeight: '800',
-                fontSize: '13px',
-                cursor: 'pointer'
-              }}
-            >
-              {s}x
-            </button>
-          ))}
+          <Slider className="replay-speed-slider" min={1} max={10} step={1} value={[speed]} onValueChange={value => setSpeed(value[0])} aria-label="Replay speed" />
+          <span className="replay-speed-value">{speed}x</span>
         </div>
 
         {/* Current Day / Progress pill */}
