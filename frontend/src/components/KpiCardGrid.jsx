@@ -1,4 +1,5 @@
 import React from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ShieldCheck, Activity, AlertTriangle, Flame, Layers } from 'lucide-react';
 
 /**
@@ -82,8 +83,17 @@ export default function KpiCardGrid({
       {cards.map((card, idx) => {
         const IconComponent = card.icon;
         return (
-          <div
+          <motion.div
             key={idx}
+            initial={{ opacity: 0, y: 18, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.42,
+              delay: idx * 0.07,
+              ease: [0.23, 1, 0.32, 1]
+            }}
+            whileHover={{ y: -5, scale: 1.012 }}
+            whileTap={{ scale: 0.985 }}
             style={{
               background: card.bgGradient,
               color: card.textColor,
@@ -95,14 +105,8 @@ export default function KpiCardGrid({
               justifyContent: 'space-between',
               position: 'relative',
               overflow: 'hidden',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              transition: 'box-shadow 0.2s ease',
               cursor: 'default'
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-3px)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             {/* Top row: Label and Icon */}
@@ -121,7 +125,10 @@ export default function KpiCardGrid({
                   {card.sublabel}
                 </div>
               </div>
-              <div style={{
+              <motion.div
+                whileHover={{ rotate: 8, scale: 1.08 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 18 }}
+                style={{
                 background: 'rgba(255, 255, 255, 0.2)',
                 padding: '6px',
                 borderRadius: '8px',
@@ -130,7 +137,7 @@ export default function KpiCardGrid({
                 justifyContent: 'center'
               }}>
                 <IconComponent size={18} color="#ffffff" />
-              </div>
+              </motion.div>
             </div>
 
             {/* Middle row: Big Bold Value */}
@@ -144,7 +151,18 @@ export default function KpiCardGrid({
               letterSpacing: '-0.02em',
               textShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}>
-              {card.value}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={card.value}
+                  initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -10, filter: 'blur(5px)' }}
+                  transition={{ duration: 0.24, ease: 'easeOut' }}
+                  style={{ display: 'inline-block' }}
+                >
+                  {card.value}
+                </motion.span>
+              </AnimatePresence>
             </div>
 
             {/* Bottom row: Pill Badge */}
@@ -162,7 +180,7 @@ export default function KpiCardGrid({
             }}>
               {card.badge}
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>
