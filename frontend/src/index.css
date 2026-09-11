@@ -221,6 +221,11 @@ button:focus-visible {
   margin-left: 232px;
   max-width: 1600px;
 }
+.landing-shell .main-content {
+  width: 100%;
+  margin-left: 0;
+  max-width: none;
+}
 .topbar {
   height: 75px;
   border-bottom: 1px solid var(--line);
