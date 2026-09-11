@@ -1,0 +1,401 @@
+import React, { useState } from 'react';
+import { FileSpreadsheet, Upload, Download, CheckCircle, AlertTriangle, ShieldCheck, Search } from 'lucide-react';
+
+export default function BatchCsvScorer() {
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [batchResult, setBatchResult] = useState(null);
+  const [filterBand, setFilterBand] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Handle file select
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  // Run Batch Scoring via Python Model API
+  const runBatchScoring = async (useDefault = false) => {
+    setLoading(true);
+    try {
+      let res;
+      if (useDefault || !file) {
+        // Run with default 365 dataset
+        res = await fetch('/api/batch-score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+      } else {
+        const formData = new FormData();
+        formData.append('file', file);
+        res = await fetch('/api/batch-score', {
+          method: 'POST',
+          body: formData
+        });
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        setBatchResult(data);
+      } else {
+        const err = await res.json();
+        alert(`Scoring error: ${err.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Error in batch scoring:', err);
+      alert('Failed to connect to Python scoring engine.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter results
+  const sampleRows = (batchResult?.sample_results || []).filter(row => {
+    const matchesBand = filterBand === 'ALL' || row.predicted_risk_band === filterBand;
+    const matchesSearch = !searchTerm || 
+      row.node_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      row.day?.toString().includes(searchTerm);
+    return matchesBand && matchesSearch;
+  });
+
+  const getStatusColor = (band) => {
+    switch (band) {
+      case 'CRITICAL': return '#ef4444';
+      case 'WARNING': return '#f97316';
+      case 'WATCH': return '#f59e0b';
+      default: return '#10b981';
+    }
+  };
+
+  const exportScoredCsv = () => {
+    if (!batchResult?.sample_results?.length) return;
+    const headers = Object.keys(batchResult.sample_results[0]).join(',');
+    const rows = batchResult.sample_results.map(r => Object.values(r).join(',')).join('\n');
+    const blob = new Blob([`${headers}\n${rows}`], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `scored_subsidence_sensor_data_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div>
+      {/* Upload and Configuration Card */}
+      <div className="glass-card" style={{ padding: '24px', marginBottom: '24px' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px',
+          borderBottom: '1px solid #1e293b',
+          paddingBottom: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FileSpreadsheet size={22} color="#00f0ff" />
+            <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
+              Batch CSV Scorer & High-Throughput Model Ingestion
+            </h3>
+          </div>
+          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            Engine: 3-Layer Unsupervised Isolation Forest Pipeline
+          </span>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '20px',
+          alignItems: 'center'
+        }}>
+          {/* Drag & Drop File Zone */}
+          <div style={{
+            border: '2px dashed #283654',
+            borderRadius: '12px',
+            padding: '24px',
+            textAlign: 'center',
+            background: 'rgba(15, 23, 42, 0.6)',
+            cursor: 'pointer'
+          }}>
+            <Upload size={32} color="#00f0ff" style={{ margin: '0 auto 8px auto' }} />
+            <p style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: '600', marginBottom: '4px' }}>
+              {file ? file.name : 'Select or Drop CSV Sensor Telemetry File'}
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '12px' }}>
+              Requires columns: node_id, day, tilt_deg, displacement_mm, strain_microstrain, vibration_mms
+            </p>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="csv-file-input"
+            />
+            <label
+              htmlFor="csv-file-input"
+              style={{
+                background: '#1e293b',
+                color: '#ffffff',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                fontSize: '0.8rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                border: '1px solid #334155'
+              }}
+            >
+              Browse Local Files
+            </label>
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <button
+              onClick={() => runBatchScoring(false)}
+              disabled={loading || !file}
+              style={{
+                background: file ? 'linear-gradient(135deg, #00f0ff 0%, #3b82f6 100%)' : '#1e293b',
+                color: file ? '#080b11' : '#64748b',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontWeight: '800',
+                fontSize: '0.9rem',
+                cursor: file && !loading ? 'pointer' : 'not-allowed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: file ? '0 0 20px rgba(0, 240, 255, 0.4)' : 'none'
+              }}
+            >
+              <CheckCircle size={18} />
+              <span>{loading ? 'SCORING BATCH DATASET...' : 'SCORE UPLOADED CSV FILE'}</span>
+            </button>
+
+            <button
+              onClick={() => runBatchScoring(true)}
+              disabled={loading}
+              style={{
+                background: '#141d30',
+                border: '1px solid #283654',
+                color: '#00f0ff',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontWeight: '800',
+                fontSize: '0.9rem',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>SCORE DEFAULT 365-DAY SENSOR DATASET</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      {batchResult && (
+        <div className="glass-card" style={{ padding: '24px' }}>
+          {/* Summary Strip */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '12px',
+            marginBottom: '20px'
+          }}>
+            <div style={{ background: '#0a0e1a', border: '1px solid #1e293b', padding: '12px 16px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Total Records Evaluated</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#00f0ff', fontFamily: 'Rajdhani, monospace' }}>
+                {batchResult.total_rows?.toLocaleString()}
+              </div>
+            </div>
+
+            <div style={{ background: '#0a0e1a', border: '1px solid #1e293b', padding: '12px 16px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Normal Nominal Rows</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#10b981', fontFamily: 'Rajdhani, monospace' }}>
+                {batchResult.band_counts?.NORMAL || 0}
+              </div>
+            </div>
+
+            <div style={{ background: '#0a0e1a', border: '1px solid #1e293b', padding: '12px 16px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Watch / Warning Rows</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#f59e0b', fontFamily: 'Rajdhani, monospace' }}>
+                {(batchResult.band_counts?.WATCH || 0) + (batchResult.band_counts?.WARNING || 0)}
+              </div>
+            </div>
+
+            <div style={{ background: '#0a0e1a', border: '1px solid #1e293b', padding: '12px 16px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>Critical Hazard Rows</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: '900', color: '#ef4444', fontFamily: 'Rajdhani, monospace' }}>
+                {batchResult.band_counts?.CRITICAL || 0}
+              </div>
+            </div>
+          </div>
+
+          {/* Table Controls */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
+            marginBottom: '16px'
+          }}>
+            {/* Filter Pills */}
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {['ALL', 'NORMAL', 'WATCH', 'WARNING', 'CRITICAL'].map(band => (
+                <button
+                  key={band}
+                  onClick={() => setFilterBand(band)}
+                  style={{
+                    background: filterBand === band ? '#00f0ff' : '#141d30',
+                    color: filterBand === band ? '#080b11' : '#94a3b8',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px 12px',
+                    fontSize: '0.75rem',
+                    fontWeight: '800',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {band}
+                </button>
+              ))}
+            </div>
+
+            {/* Search and Export */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: '#0a0e1a',
+                border: '1px solid #1e293b',
+                padding: '4px 10px',
+                borderRadius: '6px'
+              }}>
+                <Search size={14} color="#94a3b8" />
+                <input
+                  type="text"
+                  placeholder="Filter Node or Day..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#ffffff',
+                    fontSize: '0.8rem',
+                    outline: 'none',
+                    width: '130px'
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={exportScoredCsv}
+                style={{
+                  background: '#059669',
+                  border: 'none',
+                  color: '#ffffff',
+                  borderRadius: '6px',
+                  padding: '6px 14px',
+                  fontWeight: '700',
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                <Download size={14} />
+                <span>Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Scored Data Table */}
+          <div style={{
+            overflowX: 'auto',
+            background: '#0a0e1a',
+            border: '1px solid #1e293b',
+            borderRadius: '8px',
+            maxHeight: '440px'
+          }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+              <thead>
+                <tr style={{ background: '#111726', color: '#94a3b8', borderBottom: '1px solid #1e293b' }}>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Node</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Day</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Tilt (°)</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Disp (mm)</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Strain (µε)</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Vib (mm/s)</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Risk Score</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'left' }}>Predicted Band</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sampleRows.map((row, idx) => (
+                  <tr
+                    key={idx}
+                    style={{
+                      borderBottom: '1px solid #161e32',
+                      background: row.predicted_risk_band === 'CRITICAL' ? 'rgba(239, 68, 68, 0.08)' : 'transparent'
+                    }}
+                  >
+                    <td style={{ padding: '8px 14px', color: '#00f0ff', fontWeight: '700', fontFamily: 'monospace' }}>
+                      {row.node_id}
+                    </td>
+                    <td style={{ padding: '8px 14px', color: '#cbd5e1', fontFamily: 'monospace' }}>
+                      {row.day}
+                    </td>
+                    <td style={{ padding: '8px 14px', color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      {row.tilt_deg?.toFixed(2)}
+                    </td>
+                    <td style={{ padding: '8px 14px', color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      {row.displacement_mm?.toFixed(1)}
+                    </td>
+                    <td style={{ padding: '8px 14px', color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      {row.strain_microstrain?.toFixed(0)}
+                    </td>
+                    <td style={{ padding: '8px 14px', color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      {row.vibration_mms?.toFixed(2)}
+                    </td>
+                    <td style={{
+                      padding: '8px 14px',
+                      fontWeight: '800',
+                      fontFamily: 'monospace',
+                      color: getStatusColor(row.predicted_risk_band)
+                    }}>
+                      {row.predicted_risk_score?.toFixed(1)}
+                    </td>
+                    <td style={{ padding: '8px 14px' }}>
+                      <span style={{
+                        background: `${getStatusColor(row.predicted_risk_band)}22`,
+                        color: getStatusColor(row.predicted_risk_band),
+                        border: `1px solid ${getStatusColor(row.predicted_risk_band)}`,
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontWeight: '800',
+                        fontSize: '0.72rem'
+                      }}>
+                        {row.predicted_risk_band}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
