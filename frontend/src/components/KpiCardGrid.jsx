@@ -10,9 +10,9 @@ import { Badge } from './ui/badge';
  */
 export default function KpiCardGrid({
   nodesSummary = [],
-  activeNode = 'Node01',
-  currentRiskScore = 18.5,
-  currentBand = 'NORMAL'
+  _activeNode = 'Node01',
+  _currentRiskScore = 18.5,
+  _currentBand = 'NORMAL'
 }) {
   const totalNodes = nodesSummary.length || 10;
   const normalNodes = nodesSummary.filter(n => n.risk_band === 'NORMAL').length;

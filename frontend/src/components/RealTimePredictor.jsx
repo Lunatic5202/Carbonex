@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import SpeedometerGauge from './SpeedometerGauge';
+import Reveal from './Reveal';
 import { Slider } from './ui/slider';
-import { Sliders, Shield, AlertTriangle, CheckCircle, Info, RefreshCw, Cpu } from 'lucide-react';
+import { Sliders, Cpu } from 'lucide-react';
+
+const RISK_BANDS = [
+  { from: 0, to: 25, color: 'var(--cyan)' },
+  { from: 25, to: 50, color: 'var(--orange)' },
+  { from: 50, to: 75, color: 'var(--orange)' },
+  { from: 75, to: 100, color: 'var(--lime)' }
+];
 
 export default function RealTimePredictor({ activeNode = 'Node01' }) {
   // Sensor input state
@@ -97,7 +105,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
   return (
     <div>
       {/* SECTION 1: ROW OF 6 SPEEDOMETER GAUGES (Matching Image 2 - Power Generation) */}
-      <div className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
+      <Reveal className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -138,6 +146,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             color={prediction.status_color}
             statusDot={prediction.status_color}
             riskBand={prediction.risk_band}
+            bands={RISK_BANDS}
             size={180}
           />
 
@@ -201,10 +210,10 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             size={180}
           />
         </div>
-      </div>
+      </Reveal>
 
       {/* SECTION 2: INTERACTIVE SIMULATOR CONTROLS & DIAGNOSTIC CARD */}
-      <div style={{
+      <Reveal delay={0.08} style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
         gap: '24px'
@@ -483,7 +492,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             </div>
           </div>
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }

@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import SpeedometerGauge from './SpeedometerGauge';
-import { Play, Pause, SkipForward, RotateCcw, AlertTriangle, Radio, ShieldAlert } from 'lucide-react';
+import Reveal from './Reveal';
+import { Play, Pause, SkipForward, RotateCcw, Radio, ShieldAlert } from 'lucide-react';
+
+const RISK_BANDS = [
+  { from: 0, to: 25, color: 'var(--cyan)' },
+  { from: 25, to: 50, color: 'var(--orange)' },
+  { from: 50, to: 75, color: 'var(--orange)' },
+  { from: 75, to: 100, color: 'var(--lime)' }
+];
 
 export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -101,9 +110,9 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
   return (
     <div>
       {/* Playback Control Bar */}
-      <div className="glass-card" style={{
+      <Reveal className="glass-card" style={{
         padding: '16px 24px',
-        marginBottom: '20px',
+        marginBottom: '12px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -216,7 +225,35 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
             </div>
           </div>
         </div>
-      </div>
+      </Reveal>
+
+      {/* Playback progress track */}
+      <Reveal delay={0.05} style={{ marginBottom: '20px' }}>
+        <div style={{ height: 5, background: 'var(--line)', borderRadius: 4, overflow: 'hidden' }}>
+          <motion.div
+            animate={{ width: `${(currentDay / 365) * 100}%` }}
+            transition={{ duration: 0.9 / speed, ease: 'linear' }}
+            style={{
+              height: '100%',
+              background: `linear-gradient(90deg, ${statusColor}55, ${statusColor})`,
+              boxShadow: `0 0 10px ${statusColor}`,
+              borderRadius: 4
+            }}
+          />
+        </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '11px',
+          color: 'var(--muted)',
+          marginTop: '5px',
+          letterSpacing: '0.04em'
+        }}>
+          <span>DAY 0</span>
+          <span>365-DAY RECAPITULATION</span>
+          <span>DAY 365</span>
+        </div>
+      </Reveal>
 
       {/* Live Stream Dual Display: Active Speedometers + Live Alert Stream */}
       <div style={{
@@ -225,7 +262,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
         gap: '20px'
       }}>
         {/* Left: Real-Time Stream Status & Gauges */}
-        <div className="glass-card" style={{ padding: '20px' }}>
+        <Reveal delay={0.1} className="glass-card" style={{ padding: '20px' }}>
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -259,6 +296,8 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
               unit="Risk (0-100)"
               color={statusColor}
               statusDot={statusColor}
+              riskBand={currentRecord.predicted_risk_band}
+              bands={RISK_BANDS}
               size={160}
             />
             <SpeedometerGauge
@@ -303,33 +342,33 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
           }}>
             <div>
               <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Tilt</div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
+              <motion.div key={currentRecord.day + '-tilt'} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
                 {currentRecord.tilt_deg?.toFixed(2)}°
-              </div>
+              </motion.div>
             </div>
             <div>
               <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Disp</div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--orange)', }}>
+              <motion.div key={currentRecord.day + '-disp'} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ fontSize: '15px', fontWeight: '800', color: 'var(--orange)', }}>
                 {currentRecord.displacement_mm?.toFixed(1)} mm
-              </div>
+              </motion.div>
             </div>
             <div>
               <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Strain</div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
+              <motion.div key={currentRecord.day + '-strain'} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', }}>
                 {currentRecord.strain_microstrain?.toFixed(0)} µε
-              </div>
+              </motion.div>
             </div>
             <div>
               <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Vib</div>
-              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--violet)', }}>
+              <motion.div key={currentRecord.day + '-vib'} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ fontSize: '15px', fontWeight: '800', color: 'var(--violet)', }}>
                 {currentRecord.vibration_mms?.toFixed(2)} mm/s
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Right: High-Density Live Alert Log (Matching Image 4 - Problem / Alarm Logs) */}
-        <div className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
+        <Reveal delay={0.18} className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -373,8 +412,11 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
                 </thead>
                 <tbody>
                   {alerts.map((a, idx) => (
-                    <tr
+                    <motion.tr
                       key={a.id || idx}
+                      initial={{ x: -16, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
                       style={{
                         borderBottom: '1px solid var(--line)',
                         background: a.band === 'CRITICAL' ? 'color-mix(in srgb, var(--lime) 10%, transparent)' : 'transparent'
@@ -406,13 +448,13 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
                       <td style={{ padding: '8px 12px', color: 'var(--muted)' }}>
                         {a.strain > 500 ? `Strain (${a.strain.toFixed(0)}µε)` : `Tilt (${a.tilt.toFixed(2)}°)`}
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
             )}
           </div>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

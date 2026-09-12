@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { FileSpreadsheet, Upload, Download, CheckCircle, AlertTriangle, ShieldCheck, Search } from 'lucide-react';
+import { motion } from 'motion/react';
+import Reveal from './Reveal';
+import { FileSpreadsheet, Upload, Download, CheckCircle, Search } from 'lucide-react';
 
 export default function BatchCsvScorer() {
   const [file, setFile] = useState(null);
@@ -85,7 +87,7 @@ export default function BatchCsvScorer() {
   return (
     <div>
       {/* Upload and Configuration Card */}
-      <div className="glass-card" style={{ padding: '24px', marginBottom: '24px' }}>
+      <Reveal className="glass-card" style={{ padding: '24px', marginBottom: '24px' }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -198,11 +200,11 @@ export default function BatchCsvScorer() {
             </button>
           </div>
         </div>
-      </div>
+      </Reveal>
 
       {/* Results Section */}
       {batchResult && (
-        <div className="glass-card" style={{ padding: '24px' }}>
+        <Reveal className="glass-card" style={{ padding: '24px' }}>
           {/* Summary Strip */}
           <div style={{
             display: 'grid',
@@ -212,30 +214,30 @@ export default function BatchCsvScorer() {
           }}>
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
               <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Total Records Evaluated</div>
-              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
+              <motion.div key={batchResult.total_rows} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
                 {batchResult.total_rows?.toLocaleString()}
-              </div>
+              </motion.div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
               <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Normal Nominal Rows</div>
-              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
+              <motion.div key={batchResult.band_counts?.NORMAL} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.04 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--cyan)', }}>
                 {batchResult.band_counts?.NORMAL || 0}
-              </div>
+              </motion.div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
               <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Watch / Warning Rows</div>
-              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
+              <motion.div key={(batchResult.band_counts?.WATCH || 0) + (batchResult.band_counts?.WARNING || 0)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.08 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
                 {(batchResult.band_counts?.WATCH || 0) + (batchResult.band_counts?.WARNING || 0)}
-              </div>
+              </motion.div>
             </div>
 
             <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', padding: '12px 16px', borderRadius: '8px' }}>
               <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Critical Hazard Rows</div>
-              <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--lime)', }}>
+              <motion.div key={batchResult.band_counts?.CRITICAL} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.12 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--lime)', }}>
                 {batchResult.band_counts?.CRITICAL || 0}
-              </div>
+              </motion.div>
             </div>
           </div>
 
@@ -393,7 +395,7 @@ export default function BatchCsvScorer() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Reveal>
       )}
     </div>
   );

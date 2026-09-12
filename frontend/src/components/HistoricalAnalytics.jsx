@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Calendar, Eye, Activity, AlertOctagon, TrendingUp } from 'lucide-react';
+import { motion } from 'motion/react';
+import Reveal from './Reveal';
+import { Gauge, AlertTriangle, TrendingUp, Radar } from 'lucide-react';
 
 export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dayRange, setDayRange] = useState([1, 365]);
-  const [selectedSensor, setSelectedSensor] = useState('all');
   const [hoveredPoint, setHoveredPoint] = useState(null);
 
   useEffect(() => {
@@ -112,18 +113,26 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         })}
 
         {/* Shaded Area under curve */}
-        <polygon
+        <motion.polygon
           points={`${padding.left},${padding.top + chartH} ${points} ${padding.left + chartW},${padding.top + chartH}`}
           fill={`url(#grad-${valueKey})`}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
         />
 
         {/* Glowing Line Stroke */}
-        <polyline
+        <motion.polyline
           fill="none"
           stroke={color}
           strokeWidth="2.5"
           points={points}
           filter={`url(#glow-${valueKey})`}
+          initial={{ pathLength: 0, opacity: 0 }}
+          whileInView={{ pathLength: 1, opacity: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ pathLength: { duration: 1.1, ease: 'easeInOut' }, opacity: { duration: 0.3 } }}
         />
 
         {/* Invisible hit targets for tooltip */}
@@ -161,63 +170,67 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
   return (
     <div>
       {/* KPI Highlight Strip for Historical Record */}
-      <div style={{
+      <Reveal style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
         gap: '14px',
         marginBottom: '20px'
       }}>
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--cyan)' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--cyan)', position: 'relative' }}>
+          <Radar size={16} color="var(--cyan)" style={{ position: 'absolute', top: 14, right: 16, opacity: 0.8 }} />
           <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Historical Peak Risk
           </div>
-          <div style={{ fontSize: '29px', fontWeight: '900', color: maxRisk > 75 ? 'var(--lime)' : maxRisk > 50 ? 'var(--orange)' : 'var(--cyan)', }}>
+          <motion.div key={maxRisk} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ fontSize: '29px', fontWeight: '900', color: maxRisk > 75 ? 'var(--lime)' : maxRisk > 50 ? 'var(--orange)' : 'var(--cyan)', }}>
             {maxRisk.toFixed(1)} / 100
-          </div>
+          </motion.div>
           <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Across {filteredData.length} observation days
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--lime)' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--lime)', position: 'relative' }}>
+          <AlertTriangle size={16} color="var(--lime)" style={{ position: 'absolute', top: 14, right: 16, opacity: 0.8 }} />
           <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Critical Hazards
           </div>
-          <div style={{ fontSize: '29px', fontWeight: '900', color: criticalCount > 0 ? 'var(--lime)' : 'var(--cyan)', }}>
+          <motion.div key={criticalCount} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.05 }} style={{ fontSize: '29px', fontWeight: '900', color: criticalCount > 0 ? 'var(--lime)' : 'var(--cyan)', }}>
             {criticalCount} Days
-          </div>
+          </motion.div>
           <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Risk Score &gt; 75.0 (Emergency)
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)', position: 'relative' }}>
+          <TrendingUp size={16} color="var(--orange)" style={{ position: 'absolute', top: 14, right: 16, opacity: 0.8 }} />
           <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Warning Progression
           </div>
-          <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
+          <motion.div key={warningCount} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
             {warningCount} Days
-          </div>
+          </motion.div>
           <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Deformation Acceleration &gt; 50.0
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)' }}>
+        <div className="glass-card" style={{ padding: '14px 18px', borderLeft: '4px solid var(--orange)', position: 'relative' }}>
+          <Gauge size={16} color="var(--orange)" style={{ position: 'absolute', top: 14, right: 16, opacity: 0.8 }} />
           <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: '700' }}>
             Watch Drift
           </div>
-          <div style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
+          <motion.div key={watchCount} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.15 }} style={{ fontSize: '29px', fontWeight: '900', color: 'var(--orange)', }}>
             {watchCount} Days
-          </div>
+          </motion.div>
           <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
             Early Telemetry Deviation
           </div>
         </div>
-      </div>
+      </Reveal>
 
       {/* Main Historical Visualizer (Matching Image 2 - Dark Glowing Line Chart) */}
-      <div className="glass-card" style={{ padding: '20px', marginBottom: '20px' }}>
+      <Reveal className="glass-card" style={{ padding: '20px', marginBottom: '20px' }}>
         {/* Controls Header */}
         <div style={{
           display: 'flex',
@@ -294,7 +307,7 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         ) : (
           renderLineChart(filteredData, 'predicted_risk_score', 'var(--cyan)', 240, 100, true)
         )}
-      </div>
+      </Reveal>
 
       {/* Multi-Channel Synchronized Sensor Telemetry Charts */}
       <div style={{
@@ -303,7 +316,7 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
         gap: '20px'
       }}>
         {/* Tilt Chart */}
-        <div className="glass-card" style={{ padding: '16px' }}>
+        <Reveal delay={0} className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--cyan)' }}>
               Angular Tilt Telemetry (° deg)
@@ -311,10 +324,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
           {renderLineChart(filteredData, 'tilt_deg', 'var(--cyan)', 140)}
-        </div>
+        </Reveal>
 
         {/* Displacement Chart */}
-        <div className="glass-card" style={{ padding: '16px' }}>
+        <Reveal delay={0.06} className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--orange)' }}>
               Linear Displacement Telemetry (mm)
@@ -322,10 +335,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 25%</span>
           </div>
           {renderLineChart(filteredData, 'displacement_mm', 'var(--orange)', 140)}
-        </div>
+        </Reveal>
 
         {/* Strain Chart */}
-        <div className="glass-card" style={{ padding: '16px' }}>
+        <Reveal delay={0.12} className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--cyan)' }}>
               Structural Strain Telemetry (µε)
@@ -333,10 +346,10 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 30%</span>
           </div>
           {renderLineChart(filteredData, 'strain_microstrain', 'var(--cyan)', 140)}
-        </div>
+        </Reveal>
 
         {/* Vibration Chart */}
-        <div className="glass-card" style={{ padding: '16px' }}>
+        <Reveal delay={0.18} className="glass-card" style={{ padding: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', fontWeight: '700', color: 'var(--violet)' }}>
               Vibration Velocity Telemetry (mm/s)
@@ -344,7 +357,7 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Weight: 15%</span>
           </div>
           {renderLineChart(filteredData, 'vibration_mms', 'var(--violet)', 140)}
-        </div>
+        </Reveal>
       </div>
     </div>
   );

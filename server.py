@@ -33,6 +33,26 @@ MODEL_PATH = os.path.join("models", "subsidence_model.joblib")
 DATA_PATH = "subsidence_sensor_data_365.csv"
 SCORED_DATA_PATH = "scored_subsidence_sensor_data.csv"
 
+# Fixed mine-panel positions for the GIS map. Coordinates are real-world
+# placements within the Raniganj coalfield (Paschim Bardhaman, West Bengal, India).
+# No GPS is used on the nodes - coordinates are assigned at commissioning from the
+# surveyed panel layout. `commissioned: False` marks hardware that is planned but
+# not yet connected (shown as COMMISSIONING on the map).
+NODE_POSITIONS = {
+    "Node01": {"lat": 23.61850, "lng": 87.11850, "role": "Panel 7 center",           "commissioned": True,  "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+    "Node02": {"lat": 23.61850, "lng": 87.11930, "role": "Panel 7 east rib",          "commissioned": True,  "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+    "Node03": {"lat": 23.61930, "lng": 87.11850, "role": "Panel 7 north rib",         "commissioned": True,  "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+    "Node04": {"lat": 23.61770, "lng": 87.11850, "role": "Panel 7 south rib",         "commissioned": True,  "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+    "Node05": {"lat": 23.61850, "lng": 87.11770, "role": "Panel 6 center",            "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+    "Node06": {"lat": 23.62010, "lng": 87.11770, "role": "Panel 6 north pillar",      "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050"},
+    "Node07": {"lat": 23.62010, "lng": 87.11930, "role": "Panel 8 north pillar",      "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050"},
+    "Node08": {"lat": 23.61690, "lng": 87.11770, "role": "Panel 5 south pillar",      "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050"},
+    "Node09": {"lat": 23.61690, "lng": 87.11930, "role": "Panel 9 south pillar",      "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050"},
+    "Node10": {"lat": 23.61850, "lng": 87.12010, "role": "Panel 7 east extension",   "commissioned": False, "hardware": "ESP32 + LoRa SX1278 / MPU6050 + strain"},
+}
+
+GATEWAY_POSITION = {"lat": 23.62100, "lng": 87.11500, "role": "Surface gateway / telemetry uplink"}
+
 # Load or fit model
 if os.path.exists(MODEL_PATH):
     model = SubsidenceSensorFusion.load(MODEL_PATH)
@@ -187,6 +207,77 @@ def api_nodes_summary():
         })
 
     return jsonify(summaries)
+
+
+@app.route("/api/nodes-positions", methods=["GET"])
+def api_nodes_positions():
+    """
+    GIS map payload: fixed panel coordinates + live risk for the filesystem
+    (commissioned) and planned hardware. Coordinates are surveyed at rollout,
+    not GPS-derived.
+    """
+    latest = {}
+    if not df_history.empty:
+        for _, sub in df_history.groupby("node_id"):
+            row = sub.sort_values("day").iloc[-1]
+            score = float(row.get("predicted_risk_score", 15.0))
+            band = str(row.get("predicted_risk_band", get_risk_band(score)))
+            latest[row["node_id"]] = {
+                "risk_score": round(score, 1),
+                "risk_band": band,
+                "tilt_deg": round(float(row.get("tilt_deg", 0.0)), 3),
+                "displacement_mm": round(float(row.get("displacement_mm", 0.0)), 2),
+                "strain_microstrain": round(float(row.get("strain_microstrain", 0.0)), 1),
+                "vibration_mms": round(float(row.get("vibration_mms", 0.0)), 3),
+                "day": int(row.get("day", 365)),
+            }
+
+    features = []
+    for nid, pos in NODE_POSITIONS.items():
+        island = latest.get(nid)
+        commissioned = pos["commissioned"]
+        if island is not None:
+            score = island["risk_score"]
+            band = island["risk_band"]
+            color = (
+                "#10B981" if band == BAND_NORMAL else
+                "#F59E0B" if band == BAND_WATCH else
+                "#F97316" if band == BAND_WARNING else "#EF4444"
+            )
+            feature = {
+                "node_id": nid,
+                "lat": pos["lat"],
+                "lng": pos["lng"],
+                "role": pos["role"],
+                "hardware": pos["hardware"],
+                "status": "active",
+                "risk_score": score,
+                "risk_band": band,
+                "status_color": color,
+                "telemetry": {k: island[k] for k in ("tilt_deg", "displacement_mm", "strain_microstrain", "vibration_mms")},
+                "day": island["day"],
+            }
+        else:
+            feature = {
+                "node_id": nid,
+                "lat": pos["lat"],
+                "lng": pos["lng"],
+                "role": pos["role"],
+                "hardware": pos["hardware"],
+                "status": "planned",
+                "risk_score": None,
+                "risk_band": "COMMISSIONING",
+                "status_color": "#64748B",
+                "telemetry": None,
+                "day": None,
+            }
+        features.append(feature)
+
+    return jsonify({
+        "gateway": {"lat": GATEWAY_POSITION["lat"], "lng": GATEWAY_POSITION["lng"], "role": GATEWAY_POSITION["role"]},
+        "region": {"label": "Raniganj Coalfield", "center": [23.6185, 87.1185], "zoom": 15},
+        "nodes": features
+    })
 
 
 @app.route("/api/batch-score", methods=["POST"])

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, AlertTriangle, ShieldCheck, Zap, HardHat } from 'lucide-react';
+import { HardHat } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function MineNodeGrid({
@@ -78,7 +78,21 @@ export default function MineNodeGrid({
                   fontSize: '15px',
                   fontWeight: '800',
                   color: isSelected ? 'var(--cyan)' : 'var(--text)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
                 }}>
+                  <motion.span
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: bandColor,
+                      boxShadow: `0 0 8px ${bandColor}`
+                    }}
+                  />
                   {node.node_id}
                 </span>
                 <span style={{
@@ -105,6 +119,21 @@ export default function MineNodeGrid({
                   {node.risk_score?.toFixed(1)}
                 </span>
                 <span style={{ fontSize: '11px', color: 'var(--muted)' }}>/ 100 Risk</span>
+              </div>
+
+              {/* Animated Risk Load Bar */}
+              <div style={{ height: 5, borderRadius: 3, background: 'var(--line)', overflow: 'hidden', marginBottom: '9px' }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${Math.min(node.risk_score || 0, 100)}%` }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    height: '100%',
+                    background: `linear-gradient(90deg, ${bandColor}44, ${bandColor})`,
+                    boxShadow: `0 0 8px ${bandColor}`
+                  }}
+                />
               </div>
 
               {/* Telemetry Snapshot */}
