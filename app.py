@@ -1178,6 +1178,6 @@ def handle_batch_upload(contents, filename):
 if __name__ == "__main__":
     print("=" * 60)
     print(" SUBSIDENCE RISK DASHBOARD STARTING...")
-    print(" Open in your browser: http://127.0.0.1:8050")
+    print(" Open in your browser: http://10.85.219.17:8050")
     print("=" * 60)
-    app.run(debug=False, host="127.0.0.1", port=8050)
+    app.run(debug=False, host="0.0.0.0", port=8050)

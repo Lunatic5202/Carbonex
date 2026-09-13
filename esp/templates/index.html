@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LoRa Node Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; width: 300px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Live Sensor Dashboard</h1>
+    
+    <div class="card">
+        <h3>Node ID: {{ sensor.node_id }}</h3>
+        <p><strong>Packet #:</strong> {{ sensor.seq }}</p>
+        <p><strong>Temperature:</strong> {{ sensor.temp }} °C</p>
+        <p><strong>Battery:</strong> {{ sensor.batt }} %</p>
+        <p><strong>Tilt X:</strong> {{ sensor.tilt_x }} mDeg</p>
+        <p><strong>Tilt Y:</strong> {{ sensor.tilt_y }} mDeg</p>
+        <p><strong>Signal Strength:</strong> {{ sensor.rssi }} dBm</p>
+    </div>
+
+    <div class="card">
+        <h3>Latest Received Packet</h3>
+        <p><strong>Received:</strong> {{ packet.received_at or 'No packet received yet' }}</p>
+        <p><strong>Source:</strong> {{ packet.source or 'N/A' }}</p>
+        <p><strong>Content type:</strong> {{ packet.content_type or 'N/A' }}</p>
+        <pre>{{ packet.payload | tojson(indent=2) }}</pre>
+    </div>
+
+</body>
+</html>
