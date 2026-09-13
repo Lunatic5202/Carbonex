@@ -350,5 +350,5 @@ def serve_frontend(path):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    print(f"[*] CarboNex Python REST Server running at http://localhost:{port}")
+    print(f"[*] CarboNex Python REST Server running at http://10.85.219.17:{port}")
     app.run(host="0.0.0.0", port=port, debug=False)
