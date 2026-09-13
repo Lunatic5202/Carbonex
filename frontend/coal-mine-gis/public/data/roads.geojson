@@ -1,0 +1,121 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-01",
+        "label": "Pit -> Crusher",
+        "source": "demo"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.409,
+            23.746
+          ],
+          [
+            86.4115,
+            23.7472
+          ],
+          [
+            86.4145,
+            23.7482
+          ],
+          [
+            86.4183,
+            23.7488
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-02",
+        "label": "Pit -> Stockyard",
+        "source": "demo"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.4128,
+            23.7458
+          ],
+          [
+            86.4132,
+            23.7478
+          ],
+          [
+            86.4138,
+            23.7498
+          ],
+          [
+            86.4145,
+            23.7515
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-03",
+        "label": "Pit -> Workshop",
+        "source": "demo"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.4132,
+            23.739
+          ],
+          [
+            86.4165,
+            23.7385
+          ],
+          [
+            86.4195,
+            23.7392
+          ],
+          [
+            86.4205,
+            23.7395
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-04",
+        "label": "Pit -> Site Office",
+        "source": "demo"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.4062,
+            23.7405
+          ],
+          [
+            86.4055,
+            23.7432
+          ],
+          [
+            86.4048,
+            23.7458
+          ],
+          [
+            86.4045,
+            23.7478
+          ]
+        ]
+      }
+    }
+  ]
+}

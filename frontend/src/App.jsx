@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Activity, ArrowUpRight, BarChart3, BellRing, ChevronRight, Cpu, Crosshair, Database, Download, Flame, Gauge, Home, Layers3, Map, MapPin, Menu, Network, Radar, Radio, Ruler, Sparkles, X } from 'lucide-react';
+import { Activity, ArrowUpRight, BarChart3, BellRing, ChevronRight, Cpu, Database, Download, Flame, Gauge, Home, Layers3, Map, MapPin, Menu, Network, Radar, Radio, Sparkles, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,7 +9,10 @@ import RealTimePredictor from './components/RealTimePredictor';
 import HistoricalAnalytics from './components/HistoricalAnalytics';
 import LiveReplaySimulator from './components/LiveReplaySimulator';
 import BatchCsvScorer from './components/BatchCsvScorer';
-import GisRiskMap from './components/GisRiskMap';
+import CoalMineGisEmbed from './components/CoalMineGisEmbed';
+import AsciiRadar from './components/AsciiRadar';
+import BayerGlobe from './components/BayerGlobe';
+import Glass from './components/ui/Glass';
 import { Button } from './components/ui/button';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -99,78 +102,12 @@ function ContourBackdrop() {
   );
 }
 
-function SurveyFrame() {
-  const points = [[15,42],[28,66],[41,44],[50,70],[63,33],[74,58],[87,36],[80,82],[33,84],[66,90]];
-  const links = [[0,1],[0,2],[1,3],[2,3],[2,4],[3,5],[4,5],[4,6],[5,7],[3,8],[7,9],[5,9]];
-  const critical = 4;
-  return (
-    <div className="ld-survey">
-      <div className="ld-survey-hud">
-        <span><span className="status-dot" /> LIVE SURVEY · PANEL 7</span>
-        <span>N</span>
-      </div>
-      <svg viewBox="0 0 100 100" className="ld-survey-svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="ldSurveyLine" x1="0" x2="1">
-            <stop offset="0" stopColor="#c9ff3d" stopOpacity=".14" />
-            <stop offset="1" stopColor="#6ae8ff" stopOpacity=".65" />
-          </linearGradient>
-          <radialGradient id="ldSurveyHalo" cx=".5" cy=".5" r=".5">
-            <stop offset=".6" stopColor="#c9ff3d" stopOpacity=".06" />
-            <stop offset="1" stopColor="#c9ff3d" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="100" height="100" fill="url(#ldSurveyHalo)" />
-        <circle cx="50" cy="53" r="30" fill="none" stroke="rgba(201,255,61,.35)" strokeWidth=".22" strokeDasharray="1 1.6" />
-        <circle cx="50" cy="53" r="43" fill="none" stroke="rgba(106,232,255,.22)" strokeWidth=".14" strokeDasharray="4 1.4 1 1.4" transform="rotate(24 50 53)" />
-        <line x1="50" y1="5" x2="50" y2="101" stroke="rgba(201,255,61,.09)" strokeWidth=".12" strokeDasharray=".6 1.4" />
-        <line x1="5" y1="53" x2="95" y2="53" stroke="rgba(201,255,61,.09)" strokeWidth=".12" strokeDasharray=".6 1.4" />
-        <g fill="rgba(0,0,0,0)" stroke="rgba(201,255,61,.14)" strokeWidth=".1">
-          {[17, 34, 51, 68, 85].map(c => <circle key={c} cx={c} cy={c * .72} r=".9" />)}
-        </g>
-        <motion.g initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          {links.map(([a, b]) => (
-            <motion.path key={`${a}-${b}`} d={`M${points[a][0]} ${points[a][1]} L${points[b][0]} ${points[b][1]}`} fill="none" stroke="url(#ldSurveyLine)" strokeWidth=".4"
-              initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} transition={{ duration: 1.1, delay: .3 + a * .05, ease: 'easeOut' }} />
-          ))}
-        </motion.g>
-        {points.map(([x, y], i) => {
-          const isCrit = i === critical;
-          return <motion.circle key={`${x}-${y}`} cx={x} cy={y} r={isCrit ? 2.1 : 1.6} fill={isCrit ? '#ff7a3d' : '#c9ff3d'}
-            initial={{ opacity: .35 }} animate={{ opacity: [.35, 1, .35] }} transition={{ duration: 2.2 + i * .2, repeat: Infinity, delay: i * .12 }}>
-            {isCrit && <title>Node02 · CRITICAL</title>}
-          </motion.circle>;
-        })}
-        {points.map(([x, y], i) =>
-          <motion.circle key={`halo-${x}-${y}`} cx={x} cy={y} r={3} fill="rgba(201,255,61,.1)"
-            initial={{ scale: .4, opacity: 0 }} animate={{ scale: [.4, 1.6, .4], opacity: [0, .5, 0] }} transition={{ duration: 2.8, repeat: Infinity, delay: i * .22 }} />
-        )}
-        <g transform="translate(4.5 4.5)" className="ld-north">
-          <path d="M0 0 L3.4 9 L0 6.6 L-3.4 9 Z" fill="#c9ff3d" />
-        </g>
-      </svg>
-      <div className="ld-survey-lens">
-        <Crosshair size={13} />
-        <span>Node02<i className="ld-lens-tag">CRITICAL</i></span>
-      </div>
-      <div className="ld-survey-scale"><Ruler size={12} /><i /><span>100 m</span></div>
-      <div className="ld-survey-readout">
-        <div><span>RSSI</span><strong>-62 dBm</strong></div>
-        <div><span>PACKETS</span><strong>99.98%</strong></div>
-        <div><span>ACTIVE PANELS</span><strong>4 / 10</strong></div>
-      </div>
-    </div>
-  );
-}
-
 function LandingHero() {
   const root = useRef(null);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const springX = useSpring(pointerX, { stiffness: 90, damping: 22, mass: .8 });
   const springY = useSpring(pointerY, { stiffness: 90, damping: 22, mass: .8 });
-  const cardX = useTransform(springX, [-18, 18], [16, -16]);
-  const cardY = useTransform(springY, [-12, 12], [11, -11]);
   const copyX = useTransform(springX, [-18, 18], [-4, 4]);
   const copyY = useTransform(springY, [-12, 12], [-2.5, 2.5]);
   const glowX = useTransform(springX, [-18, 18], [-28, 28]);
@@ -185,10 +122,8 @@ function LandingHero() {
           .from('.ld-hero-title', { y: 64, opacity: 0, duration: .9 }, '-=.25')
           .from('.ld-hero-sub', { y: 22, opacity: 0, duration: .5 }, '-=.55')
           .from('.ld-hero-actions, .ld-hero-proof', { y: 18, opacity: 0, duration: .45, stagger: .1 }, '-=.42')
-          .from('.ld-survey', { scale: .86, opacity: 0, rotate: 3, duration: .9 }, '-=.75')
           .from('.ld-hero-ticker', { y: 26, opacity: 0, duration: .45 }, '-=.4');
         gsap.to('.ld-hero-copy-col', { yPercent: -14, opacity: .12, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.to('.ld-survey', { yPercent: 22, scale: 1.05, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
         gsap.to('.ld-contour-bg', { yPercent: 34, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } });
       });
     }, root);
@@ -210,22 +145,39 @@ function LandingHero() {
       <span className="ld-rule ld-rule-bl" /><span className="ld-rule ld-rule-br" />
       <div className="ld-hero-inner">
         <motion.div className="ld-hero-copy-col" style={{ x: copyX, y: copyY }}>
-          <div className="ld-eyebrow"><i />MINE PANEL A / RANIGANJ COALFIELD</div>
-          <h1 className="ld-hero-title">See the ground<br /><em>before it moves.</em></h1>
-          <p className="ld-hero-sub">Carbonex turns a mesh of cheap sensors into an early-warning instrument. From the first millidegree of tilt to a field-ready alert — no line of sight, no hand-walked rounds, no dead air underground.</p>
-          <div className="ld-hero-actions">
-            <Button className="ld-cta" onClick={() => go('/monitor')}>Open live workspace <ArrowUpRight size={16} /></Button>
-            <Button variant="ghost" className="ld-text-cta" onClick={() => go('/map')}>Explore risk map <span>↗</span></Button>
-          </div>
-          <div className="ld-hero-proof">
-            <div><strong>24 / 7</strong><span>continuous sensing</span></div>
-            <div><strong>4.2 km</strong><span>mesh coverage</span></div>
-            <div><strong>6 min</strong><span>early signal window</span></div>
-          </div>
+          <Glass className="lg-glass lg-hero-glass">
+            <div className="ld-eyebrow"><i />MINE PANEL A / RANIGANJ COALFIELD</div>
+            <h1 className="ld-hero-title">See the ground<br /><em>before it moves.</em></h1>
+            <p className="ld-hero-sub">Carbonex turns a mesh of cheap sensors into an early-warning instrument. From the first millidegree of tilt to a field-ready alert — no line of sight, no hand-walked rounds, no dead air underground.</p>
+            <div className="ld-hero-actions">
+              <Button className="ld-cta" onClick={() => go('/monitor')}>Open live workspace <ArrowUpRight size={16} /></Button>
+              <Button variant="ghost" className="ld-text-cta" onClick={() => go('/map')}>Explore risk map <span>↗</span></Button>
+            </div>
+            <div className="ld-hero-proof">
+              <div><strong>24 / 7</strong><span>continuous sensing</span></div>
+              <div><strong>4.2 km</strong><span>mesh coverage</span></div>
+              <div><strong>6 min</strong><span>early signal window</span></div>
+            </div>
+          </Glass>
         </motion.div>
-        <motion.div className="ld-hero-visual" style={{ x: cardX, y: cardY }}>
-          <SurveyFrame />
-        </motion.div>
+        <Glass className="lg-glass lg-globe-glass">
+          <div className="lg-globe-cell">
+            <BayerGlobe
+              colorA="#050a14"
+              colorB="#c9ff3d"
+              accent="#6ae8ff"
+              pixel={14}
+              levels={5}
+              land={9}
+              globeSize={13}
+              glowEnabled
+              glowSize={7}
+              speed={16}
+              dragEnabled
+              style={{ minWidth: 0, minHeight: 0 }}
+            />
+          </div>
+        </Glass>
       </div>
       <div className="ld-hero-ticker">
         <div className="ld-ticker-track">
@@ -260,16 +212,18 @@ function FieldStats() {
 
   return (
     <section className="ld-stats" ref={root}>
-      <div className="ld-stats-head"><span className="section-label">FIELD CARD</span><strong>Operating numbers, straight from the panel</strong></div>
-      <div className="ld-stats-grid">
-        {FIELD_STATS.map(s => (
-          <motion.div key={s.label} className="ld-stat" whileHover={{ y: -4 }}>
-            <span>{s.label}</span>
-            <div className="ld-stat-num"><b data-count={s.value} data-decimals={s.decimals}>0</b>{s.suffix}</div>
-            <small>{s.note}</small>
-          </motion.div>
-        ))}
-      </div>
+      <Glass className="lg-glass">
+        <div className="ld-stats-head"><span className="section-label">FIELD CARD</span><strong>Operating numbers, straight from the panel</strong></div>
+        <div className="ld-stats-grid">
+          {FIELD_STATS.map(s => (
+            <motion.div key={s.label} className="ld-stat" whileHover={{ y: -4 }}>
+              <span>{s.label}</span>
+              <div className="ld-stat-num"><b data-count={s.value} data-decimals={s.decimals}>0</b>{s.suffix}</div>
+              <small>{s.note}</small>
+            </motion.div>
+          ))}
+        </div>
+      </Glass>
     </section>
   );
 }
@@ -283,6 +237,7 @@ function RiskTerrain() {
   const last = series[series.length - 1];
   return (
     <section className="ld-terrain">
+      <Glass className="lg-glass">
       <div className="ld-terrain-grid">
         <div className="ld-terrain-intro">
           <span className="section-label">THE RISK SURFACE</span>
@@ -352,6 +307,7 @@ function RiskTerrain() {
           );
         })}
       </div>
+      </Glass>
     </section>
   );
 }
@@ -359,6 +315,7 @@ function RiskTerrain() {
 function SignalPath() {
   return (
     <section className="ld-signal">
+      <Glass className="lg-glass">
       <div className="ld-signal-head">
         <span className="section-label">THE SIGNAL PATH</span>
         <h2>Sense → transmit → understand → act.</h2>
@@ -380,6 +337,7 @@ function SignalPath() {
           </React.Fragment>
         ))}
       </div>
+      </Glass>
     </section>
   );
 }
@@ -387,22 +345,73 @@ function SignalPath() {
 function LandingCta() {
   return (
     <section className="ld-cta-band">
-      <span className="ld-cta-graph" aria-hidden="true">{RISK_SERIES.map((v, i) => <i key={i} style={{ height: `${Math.max(4, v)}%`, '--d': `${i * 0.045}s` }} />)}</span>
-      <div className="ld-cta-inner">
-        <span className="section-label">DEPLOYMENT READY</span>
-        <h2>First shift under the surface<br />starts with a louder signal.</h2>
-        <div className="ld-cta-actions">
-          <Button className="ld-cta ld-cta-invert" onClick={() => go('/monitor')}>Open the live workspace <Gauge size={16} /></Button>
-          <Button variant="ghost" className="ld-text-cta" onClick={() => go('/')}><Sparkles size={15} /> Back to overview</Button>
+      <Glass className="lg-glass">
+        <span className="ld-cta-graph" aria-hidden="true">{RISK_SERIES.map((v, i) => <i key={i} style={{ height: `${Math.max(4, v)}%`, '--d': `${i * 0.045}s` }} />)}</span>
+        <div className="ld-cta-inner">
+          <span className="section-label">DEPLOYMENT READY</span>
+          <h2>First shift under the surface<br />starts with a louder signal.</h2>
+          <div className="ld-cta-actions">
+            <Button className="ld-cta ld-cta-invert" onClick={() => go('/monitor')}>Open the live workspace <Gauge size={16} /></Button>
+            <Button variant="ghost" className="ld-text-cta" onClick={() => go('/')}><Sparkles size={15} /> Back to overview</Button>
         </div>
       </div>
+      </Glass>
     </section>
   );
 }
 
 function LandingPage() {
+  const root = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(prefers-reduced-motion: no-preference)', () => {
+        const factors = [
+          { glass: -16, inner: 4 },
+          { glass: 20, inner: -5 },
+          { glass: -26, inner: 7 },
+          { glass: 30, inner: -6 }
+        ];
+        gsap.utils.toArray('.ld-page > section', root.current).forEach((section, i) => {
+          const f = factors[i % factors.length];
+          const glass = section.querySelector('.lg-glass');
+          if (!glass) return;
+          gsap.to(glass, {
+            yPercent: f.glass, ease: 'none', force3D: true,
+            scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true }
+          });
+          const inner = section.querySelector('.lg-glass .glass-content');
+          if (inner) gsap.to(inner, {
+            yPercent: f.inner, ease: 'none',
+            scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true }
+          });
+        });
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="ld-page">
+    <div className="ld-page" ref={root}>
+      <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0 }}>
+        <filter id="lg-dist" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="2" seed="92" result="noise" />
+          <feGaussianBlur in="noise" stdDeviation="1.5" result="blurred" />
+          <feDisplacementMap in="SourceGraphic" in2="blurred" scale="34" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </svg>
+      <AsciiRadar
+        className="ld-radar-bg"
+        background="transparent"
+        glyphColor="#c9ff3d"
+        ringColor="#c9ff3d"
+        scale={110}
+        glyphSize={52}
+        density={58}
+        speed={48}
+        ringSpeed={60}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', opacity: 0.5, pointerEvents: 'none' }}
+      />
       <LandingHero />
       <FieldStats />
       <RiskTerrain />
@@ -414,7 +423,7 @@ function LandingPage() {
 function Sidebar({ page, mobileNav, setMobileNav }) { return <aside className={`sidebar ${mobileNav?'sidebar-open':''}`}><div className="brand-lockup"><div className="brand-mark"><span/><span/><span/></div><div><strong>carbonex</strong><small>ground intelligence</small></div></div><button className="mobile-close" onClick={()=>setMobileNav(false)} aria-label="Close navigation"><X size={20}/></button><div className="sidebar-kicker">Workspace</div><nav className="side-nav">{navItems.map(({id,path,label,icon:Icon})=><motion.button key={id} className={page.id===id?'nav-item active':'nav-item'} onClick={()=>{go(path);setMobileNav(false)}} whileHover={{ x: 2 }} whileTap={{ scale: .97 }}><Icon size={17}/><span>{label}</span>{page.id===id&&<motion.span layoutId="active-nav" className="nav-active-pill"/>}<ChevronRight size={15} className="nav-arrow"/></motion.button>)}</nav><div className="sidebar-spacer"/><div className="system-card"><div className="system-card-header"><span className="status-dot"/> SYSTEM NOMINAL</div><div className="system-card-value">99.98<span>%</span></div><div className="system-card-note">mesh availability / last 24h</div><div className="mini-bar"><i/></div></div><div className="sidebar-footer"><span>CARBONEX / 0.9.4</span><span className="env-pill">EDGE + CLOUD</span></div></aside>; }
 
 function DashboardPage({ page, nodesSummary, selectedNode, setSelectedNode, activeRisk, liveNodes }) { return <WorkspacePage page={page}><div><div className="route-console"><span><Layers3 size={15}/> {liveNodes} nodes reporting</span><span><Gauge size={15}/> peak risk {activeRisk.toFixed(1)}</span></div><KpiCardGrid nodesSummary={nodesSummary} activeNode={selectedNode}/><MineNodeGrid nodesSummary={nodesSummary} selectedNode={selectedNode} onSelectNode={setSelectedNode}/><div className="route-module"><RealTimePredictor activeNode={selectedNode}/></div></div></WorkspacePage>; }
-function GisPage({ page, selectedNode, setSelectedNode }) { return <WorkspacePage page={page}><GisRiskMap selectedNode={selectedNode} onNodeSelected={setSelectedNode}/></WorkspacePage>; }
+function GisPage({ page }) { return <WorkspacePage page={page}><CoalMineGisEmbed /></WorkspacePage>; }
 function AnalyticsPage({ page, selectedNode }) { return <WorkspacePage page={page}><HistoricalAnalytics activeNode={selectedNode}/></WorkspacePage>; }
 function ReplayPage({ page, selectedNode }) { return <WorkspacePage page={page}><LiveReplaySimulator activeNode={selectedNode}/></WorkspacePage>; }
 function BatchPage({ page }) { return <WorkspacePage page={page}><BatchCsvScorer/></WorkspacePage>; }
@@ -424,5 +433,5 @@ export default function App() {
   useEffect(()=>{const onPop=()=>setPage(resolvePage());window.addEventListener('popstate',onPop);return()=>window.removeEventListener('popstate',onPop)},[]);
   useEffect(()=>{async function init(){try{const [a,b]=await Promise.all([fetch('/api/status'),fetch('/api/nodes-summary')]);if(a.ok){const d=await a.json();if(d.nodes?.length){setNodes(d.nodes);setSelectedNode(c=>d.nodes.includes(c)?c:d.nodes[0])}}if(b.ok)setNodesSummary(await b.json())}catch(e){console.error('Error initializing CarboNex data:',e)}}init();const i=setInterval(init,15000);return()=>clearInterval(i)},[]);
   const activeRisk=useMemo(()=>nodesSummary.length?Math.max(...nodesSummary.map(n=>n.risk_score||0)):18.4,[nodesSummary]); const liveNodes=nodesSummary.length||nodes.length; const isLanding=page.id==='landing';
-  return <div className={isLanding?'app-shell landing-shell':'app-shell'}>{!isLanding&&<Sidebar page={page} mobileNav={mobileNav} setMobileNav={setMobileNav}/>} {!isLanding&&mobileNav&&<button className="nav-scrim" onClick={()=>setMobileNav(false)} aria-label="Close navigation"/>}<main className="main-content">{!isLanding&&<header className="topbar"><button className="mobile-menu" onClick={()=>setMobileNav(true)} aria-label="Open navigation"><Menu size={22}/></button><div className="breadcrumb"><span>CARBONEX</span><ChevronRight size={14}/><strong>{page.label.toUpperCase()}</strong></div><div className="topbar-actions"><span className="sync-status"><span className="status-dot"/> synced 12s ago</span><button className="icon-button" title="Download report"><Download size={17}/></button><div className="avatar">AK</div></div></header>}{isLanding?<LandingPage/>:<AnimatePresence mode="wait" initial={false}>{page.id==='gis'&&<GisPage key={page.id} page={page} selectedNode={selectedNode} setSelectedNode={setSelectedNode}/>} {page.id==='predictor'&&<DashboardPage key={page.id} page={page} nodesSummary={nodesSummary} selectedNode={selectedNode} setSelectedNode={setSelectedNode} activeRisk={activeRisk} liveNodes={liveNodes}/>} {page.id==='historical'&&<AnalyticsPage key={page.id} page={page} selectedNode={selectedNode}/>} {page.id==='replay'&&<ReplayPage key={page.id} page={page} selectedNode={selectedNode}/>} {page.id==='batch'&&<BatchPage key={page.id} page={page}/>}</AnimatePresence>}<footer className="app-footer"><div><strong>carbonex</strong> / ground intelligence platform</div><div>Built for safer extraction <span>•</span> Smart India Hackathon 2025</div></footer></main></div>;
+  return <div className={isLanding?'app-shell landing-shell':'app-shell'}>{!isLanding&&<Sidebar page={page} mobileNav={mobileNav} setMobileNav={setMobileNav}/>} {!isLanding&&mobileNav&&<button className="nav-scrim" onClick={()=>setMobileNav(false)} aria-label="Close navigation"/>}<main className="main-content">{!isLanding&&<header className="topbar"><button className="mobile-menu" onClick={()=>setMobileNav(true)} aria-label="Open navigation"><Menu size={22}/></button><div className="breadcrumb"><span>CARBONEX</span><ChevronRight size={14}/><strong>{page.label.toUpperCase()}</strong></div><div className="topbar-actions"><span className="sync-status"><span className="status-dot"/> synced 12s ago</span><button className="icon-button" title="Download report"><Download size={17}/></button><div className="avatar">AK</div></div></header>}{isLanding?<LandingPage/>:<AnimatePresence mode="wait" initial={false}>{page.id==='gis'&&<GisPage key={page.id} page={page}/>} {page.id==='predictor'&&<DashboardPage key={page.id} page={page} nodesSummary={nodesSummary} selectedNode={selectedNode} setSelectedNode={setSelectedNode} activeRisk={activeRisk} liveNodes={liveNodes}/>} {page.id==='historical'&&<AnalyticsPage key={page.id} page={page} selectedNode={selectedNode}/>} {page.id==='replay'&&<ReplayPage key={page.id} page={page} selectedNode={selectedNode}/>} {page.id==='batch'&&<BatchPage key={page.id} page={page}/>}</AnimatePresence>}<footer className="app-footer"><div><strong>carbonex</strong> / ground intelligence platform</div><div>Built for safer extraction <span>•</span> Smart India Hackathon 2025</div></footer></main></div>;
 }

@@ -1,0 +1,102 @@
+/* ==========================================================================
+   COAL MINE INTELLIGENCE — design tokens
+   Palette: basalt / seam / ochre. A dark industrial control-room language
+   with an earth-toned accent (not a generic SaaS blue) and a monospace face
+   reserved for telemetry, IDs and coordinates so readouts read like real
+   instrument data rather than UI chrome.
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --basalt-950: #0e1113;
+  --basalt-900: #14181b;
+  --basalt-850: #1a1f23;
+  --basalt-800: #20262b;
+  --basalt-700: #2b3238;
+  --basalt-600: #3a4249;
+  --seam-line: #333c42;
+
+  /* Text */
+  --ink-100: #eef1f2;
+  --ink-300: #b9c2c7;
+  --ink-500: #8a959c;
+  --ink-700: #5c666c;
+
+  /* Accent — ochre/rust, drawn from oxidised earth & haul-road ochre, not
+     Anthropic's terracotta and not a SaaS blue */
+  --ochre-500: #c17a3d;
+  --ochre-400: #d99457;
+  --ochre-glow: rgba(193, 122, 61, 0.35);
+
+  /* Status scale */
+  --status-normal: #4caf7d;
+  --status-watch: #d9b13d;
+  --status-warning: #e08a3c;
+  --status-critical: #d64545;
+  --status-offline: #6b747a;
+
+  /* Type */
+  --font-ui: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 5px;
+
+  --shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--basalt-950);
+  color: var(--ink-100);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--basalt-600);
+  border-radius: 4px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: var(--ochre-400);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ochre-400);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-A-01",
+        "status": "normal",
+        "battery": 92,
+        "riskScore": 14,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.411,
+          23.7452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-B-01",
+        "status": "watch",
+        "battery": 78,
+        "riskScore": 42,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.4135,
+          23.7438
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-C-03",
+        "status": "warning",
+        "battery": 87,
+        "riskScore": 74,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.4118,
+          23.744
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-D-01",
+        "status": "critical",
+        "battery": 63,
+        "riskScore": 88,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.409,
+          23.7405
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-E-01",
+        "status": "normal",
+        "battery": 95,
+        "riskScore": 9,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.408,
+          23.746
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "NODE-F-06",
+        "status": "offline",
+        "battery": 11,
+        "riskScore": 0,
+        "source": "demo-example-only"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.4145,
+          23.7448
+        ]
+      }
+    }
+  ]
+}

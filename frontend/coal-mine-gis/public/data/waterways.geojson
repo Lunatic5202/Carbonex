@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Example nullah / seasonal stream (DEMO placeholder)",
+        "source": "demo"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            86.3985,
+            23.753
+          ],
+          [
+            86.404,
+            23.748
+          ],
+          [
+            86.409,
+            23.742
+          ],
+          [
+            86.413,
+            23.737
+          ]
+        ]
+      }
+    }
+  ]
+}

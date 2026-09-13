@@ -319,6 +319,20 @@ def api_batch_score():
         return jsonify({"error": str(e)}), 400
 
 
+# Coal Mine GIS module (standalone build embed)
+GIS_DIST_DIR = os.path.join(os.path.dirname(__file__), "frontend", "coal-mine-gis", "dist")
+
+
+@app.route("/gis/")
+@app.route("/gis/<path:subpath>")
+def serve_gis(subpath=""):
+    if os.path.exists(GIS_DIST_DIR):
+        if subpath != "" and os.path.exists(os.path.join(GIS_DIST_DIR, subpath)):
+            return send_from_directory(GIS_DIST_DIR, subpath)
+        return send_from_directory(GIS_DIST_DIR, "index.html")
+    return jsonify({"message": "Coal Mine GIS module not built. Run 'npm install && npm run build' inside frontend/coal-mine-gis/"}), 404
+
+
 # Frontend static files routing
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")

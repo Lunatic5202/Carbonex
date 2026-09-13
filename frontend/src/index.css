@@ -1644,6 +1644,61 @@ h1 em {
   color: var(--muted);
   letter-spacing: 0.6px;
 }
+.gis-embed-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+}
+.gis-embed-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  font-size: 12px;
+}
+.gis-embed-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  flex: 1 1 auto;
+  min-width: 220px;
+}
+.gis-embed-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #7fffd4;
+  text-decoration: none;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 255, 212, 0.35);
+  background: rgba(16, 185, 129, 0.07);
+  transition: background 0.2s ease;
+}
+.gis-embed-link:hover {
+  background: rgba(16, 185, 129, 0.16);
+}
+.gis-embed-frame {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+.gis-embed-frame iframe {
+  display: block;
+  width: 100%;
+  height: calc(100vh - 250px);
+  min-height: 640px;
+  border: 0;
+  background: #0b1520;
+}
 .gis-live-chip {
   position: absolute;
   right: 14px;
@@ -1944,6 +1999,92 @@ h1 em {
 .ld-page {
   position: relative;
 }
+.ld-page .ld-radar-bg {
+  z-index: 0;
+}
+.ld-page > section {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- liquid glass ---- */
+.lg-glass {
+  --lg-text: #ffffff;
+}
+.glass-container {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  font-weight: 600;
+  color: var(--lg-text, #ffffff);
+  border-radius: 24px;
+  background: transparent;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 30px 70px -26px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.glass-filter {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  backdrop-filter: blur(16px) saturate(150%);
+  filter: url(#lg-dist);
+  isolation: isolate;
+}
+.glass-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(150deg, rgba(42, 56, 38, 0.42), rgba(20, 28, 18, 0.5) 55%, rgba(13, 18, 12, 0.58));
+}
+.glass-specular {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 26%, transparent 62%);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.24), inset 0 0 28px rgba(255, 255, 255, 0.05);
+}
+.glass-content {
+  position: relative;
+  z-index: 3;
+}
+.glass-content h1,
+.glass-content h2,
+.glass-content h3,
+.glass-content p {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.lg-hero-glass .glass-content {
+  padding: 40px 44px;
+  border-radius: inherit;
+}
+.ld-stats .glass-content {
+  padding: 38px 38px 42px;
+}
+.ld-terrain .glass-content {
+  padding: 46px;
+}
+.ld-signal .glass-content {
+  padding: 46px 46px 50px;
+}
+.ld-cta-band {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.ld-cta-band > .glass-container {
+  margin: 0;
+}
+.ld-cta-band .glass-content {
+  padding: 64px 6vw;
+}
 .ld-hero {
   position: relative;
   min-height: calc(100vh - 60px);
@@ -2013,13 +2154,35 @@ h1 em {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(380px, 1fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 300px);
+  grid-template-rows: minmax(0, 1fr);
   align-items: center;
   gap: 4.5vw;
   width: 100%;
   max-width: 1360px;
   margin: 0 auto;
   padding: 84px 6vw 76px;
+}
+.lg-globe-glass {
+  justify-self: center;
+  width: min(100%, 260px);
+  aspect-ratio: 4 / 5;
+}
+.lg-globe-glass .glass-content {
+  padding: 0;
+  position: absolute;
+  inset: 0;
+}
+.lg-globe-glass .glass-specular {
+  z-index: 4;
+  pointer-events: none;
+}
+.lg-globe-cell {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(201, 255, 61, 0.07), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(106, 232, 255, 0.05), transparent 72%);
 }
 .ld-hero-copy-col {
   position: relative;
@@ -2130,126 +2293,6 @@ h1 em {
   margin-top: 5px;
   letter-spacing: 0.08em;
 }
-.ld-hero-visual {
-  position: relative;
-  will-change: transform;
-  transform-style: preserve-3d;
-}
-.ld-survey {
-  position: relative;
-  border: 1px solid rgba(201, 255, 61, 0.22);
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(201, 255, 61, 0.05), transparent 60%),
-    linear-gradient(160deg, rgba(22, 30, 16, 0.92), rgba(10, 14, 9, 0.96));
-  box-shadow:
-    0 34px 80px -24px rgba(0, 0, 0, 0.75),
-    0 0 0 1px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  overflow: hidden;
-}
-.ld-survey::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(201, 255, 61, 0) 0%, rgba(201, 255, 61, 0.03) 88%);
-}
-.ld-survey-hud {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  font: 500 9px "DM Mono";
-  letter-spacing: 0.14em;
-  color: #8ba08a;
-  border-bottom: 1px solid rgba(201, 255, 61, 0.1);
-  z-index: 3;
-}
-.ld-survey-hud > span:last-child {
-  color: #c9ff3d;
-  font-size: 12px;
-  line-height: 1;
-}
-.ld-survey-svg {
-  width: 100%;
-  height: auto;
-  max-height: 460px;
-  display: block;
-  margin-top: 8px;
-}
-.ld-north path {
-  filter: drop-shadow(0 0 6px rgba(201, 255, 61, 0.8));
-}
-.ld-survey-lens {
-  position: absolute;
-  top: 28%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 11px;
-  border: 1px solid rgba(201, 255, 61, 0.4);
-  background: rgba(10, 14, 9, 0.78);
-  border-radius: 7px;
-  font: 600 9px "DM Mono";
-  letter-spacing: 0.1em;
-  color: #c9ff3d;
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-}
-.ld-survey-lens .ld-lens-tag {
-  font-style: normal;
-  color: #ff7a3d;
-  background: rgba(255, 122, 61, 0.14);
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 3px;
-  letter-spacing: 0.08em;
-}
-.ld-survey-scale {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font: 9px "DM Mono";
-  color: #7c8c7a;
-}
-.ld-survey-scale i {
-  width: 44px;
-  height: 5px;
-  border-left: 1px solid #9fb39a;
-  border-right: 1px solid #9fb39a;
-  border-bottom: 1px solid #9fb39a;
-}
-.ld-survey-readout {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  display: flex;
-  gap: 18px;
-  font: 9px "DM Mono";
-}
-.ld-survey-readout div {
-  text-align: right;
-}
-.ld-survey-readout span {
-  display: block;
-  color: #5f6f5d;
-  letter-spacing: 0.12em;
-  margin-bottom: 3px;
-}
-.ld-survey-readout strong {
-  color: #dceccf;
-  font-weight: 500;
-}
 .ld-hero-ticker {
   position: relative;
   z-index: 2;
@@ -2312,9 +2355,9 @@ h1 em {
 .ld-stat {
   position: relative;
   padding: 26px 22px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  background: linear-gradient(160deg, rgba(20, 26, 20, 0.85), rgba(13, 17, 12, 0.9));
+  background: rgba(15, 22, 14, 0.38);
   overflow: hidden;
   transition: border-color 0.25s var(--ease);
 }
@@ -2426,9 +2469,9 @@ h1 em {
   border: 1px solid rgba(201, 255, 61, 0.16);
   border-radius: 14px;
   background:
-    radial-gradient(circle at 78% 30%, rgba(255, 122, 61, 0.06), transparent 44%),
-    linear-gradient(165deg, rgba(20, 26, 18, 0.92), rgba(11, 15, 10, 0.95));
-  box-shadow: 0 34px 80px -24px rgba(0, 0, 0, 0.7);
+    radial-gradient(circle at 78% 30%, rgba(255, 122, 61, 0.05), transparent 44%),
+    rgba(13, 19, 12, 0.42);
+  box-shadow: 0 34px 80px -24px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
 }
@@ -2534,7 +2577,7 @@ h1 em {
   padding: 15px 16px 10px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: rgba(16, 21, 15, 0.75);
+  background: rgba(13, 19, 12, 0.45);
 }
 .ld-spark-head {
   display: flex;
@@ -2593,9 +2636,9 @@ h1 em {
   position: relative;
   flex: 1;
   padding: 24px 22px 22px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 13px;
-  background: linear-gradient(160deg, rgba(20, 26, 20, 0.88), rgba(12, 16, 11, 0.92));
+  background: rgba(15, 22, 14, 0.38);
   overflow: hidden;
   transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
@@ -2725,9 +2768,6 @@ h1 em {
     gap: 52px;
     padding: 84px 7vw 64px;
   }
-  .ld-hero-visual {
-    max-width: 620px;
-  }
   .ld-terrain-grid {
     grid-template-columns: 1fr;
     gap: 44px;
@@ -2808,9 +2848,6 @@ h1 em {
   .ld-cta-graph {
     right: 0;
     height: 50%;
-  }
-  .ld-survey-readout {
-    display: none;
   }
   .ld-ticker-item {
     padding: 12px 18px;
