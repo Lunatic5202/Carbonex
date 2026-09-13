@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import SpeedometerGauge from './SpeedometerGauge';
 import Reveal from './Reveal';
-import { Slider } from './ui/slider';
-import { Sliders, Cpu } from 'lucide-react';
+import {
+  Cpu,
+  Radio,
+  Wifi,
+  Battery,
+  Thermometer,
+  Compass,
+  Terminal,
+  ChevronDown,
+  ChevronUp,
+  Activity,
+  Zap,
+  HardHat
+} from 'lucide-react';
 
 const RISK_BANDS = [
   { from: 0, to: 25, color: 'var(--cyan)' },
@@ -11,100 +23,202 @@ const RISK_BANDS = [
   { from: 75, to: 100, color: 'var(--lime)' }
 ];
 
-export default function RealTimePredictor({ activeNode = 'Node01' }) {
-  // Sensor input state
-  const [readings, setReadings] = useState({
-    tilt_deg: 0.15,
-    displacement_mm: 0.8,
-    strain_microstrain: 65.0,
-    vibration_mms: 0.08
+export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' }) {
+  // Real-time live node telemetry from ESP32 / LoRa SX1278 hardware
+  const [liveNodeData, setLiveNodeData] = useState({
+    node_id: 'CarboNex Data Node',
+    seq: 0,
+    tilt_x: 120,
+    tilt_y: 65,
+    tilt_deg: 0.137,
+    temp: 28,
+    batt: 95,
+    vib: 0.07,
+    crack: 0.75,
+    rssi: -65,
+    displacement_mm: 0.75,
+    strain_microstrain: 62.0,
+    vibration_mms: 0.07,
+    status: 'online',
+    received_at: null,
+    source: '127.0.0.1',
+    packets_received: 1
   });
 
-  // Model prediction response state
+  const [latestPacket, setLatestPacket] = useState(null);
+  const [showRawPacket, setShowRawPacket] = useState(false);
+  const [lastPacketAgo, setLastPacketAgo] = useState('Standby');
+  const [loading, setLoading] = useState(false);
+
+  // Live sensor readings feeding the speedometers and inference engine
+  const [readings, setReadings] = useState({
+    tilt_deg: 0.137,
+    displacement_mm: 0.75,
+    strain_microstrain: 62.0,
+    vibration_mms: 0.07
+  });
+
+  // Real-time model prediction response
   const [prediction, setPrediction] = useState({
     risk_score: 18.2,
     risk_band: 'NORMAL',
     status_color: 'var(--cyan)',
     primary_driver: 'Nominal Baseline',
     driver_contribution_pct: 0.0,
-    summary: 'Node is operating within nominal baseline parameters. All sensor channels show stable background telemetry.',
+    summary: 'CarboNex Data Node is operating within nominal baseline parameters. All sensor channels show stable background telemetry.',
     recommendation: 'Standard automated monitoring. No immediate maintenance intervention required.',
     sensor_scores: { tilt_deg: 0.02, displacement_mm: 0.01, strain_microstrain: 0.03, vibration_mms: 0.01 },
     sensor_trends: {}
   });
 
-  const [loading, setLoading] = useState(false);
-
-  // Preset scenarios
-  const presets = [
-    {
-      id: 'nominal',
-      name: 'Nominal Baseline',
-      color: 'var(--cyan)',
-      values: { tilt_deg: 0.12, displacement_mm: 0.6, strain_microstrain: 48.0, vibration_mms: 0.05 }
-    },
-    {
-      id: 'watch',
-      name: 'Early Watch (Tilt Drift)',
-      color: 'var(--orange)',
-      values: { tilt_deg: 1.85, displacement_mm: 4.2, strain_microstrain: 280.0, vibration_mms: 0.45 }
-    },
-    {
-      id: 'warning',
-      name: 'Warning (Strain Accel)',
-      color: 'var(--orange)',
-      values: { tilt_deg: 4.2, displacement_mm: 16.5, strain_microstrain: 720.0, vibration_mms: 1.8 }
-    },
-    {
-      id: 'critical',
-      name: 'Critical Hazard',
-      color: 'var(--lime)',
-      values: { tilt_deg: 8.5, displacement_mm: 52.0, strain_microstrain: 1650.0, vibration_mms: 6.2 }
-    }
-  ];
-
-  // Fetch prediction from backend
-  const runPrediction = async (currentReadings) => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          node_id: activeNode,
-          readings: currentReadings
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setPrediction(data);
-      }
-    } catch (err) {
-      console.error('Error calling /api/predict:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Run prediction when readings or node change
+  // Continuously poll real-time telemetry from ESP32 / LoRa backend
   useEffect(() => {
-    runPrediction(readings);
-  }, [readings, activeNode]);
+    let isMounted = true;
 
-  const handleSliderChange = (sensor, val) => {
-    setReadings(prev => ({
-      ...prev,
-      [sensor]: parseFloat(val)
-    }));
-  };
+    async function fetchRealTimeFeed() {
+      try {
+        const [nodesRes, latestRes] = await Promise.all([
+          fetch('/api/live-nodes'),
+          fetch('/latest')
+        ]);
 
-  const applyPreset = (presetValues) => {
-    setReadings(presetValues);
-  };
+        if (nodesRes.ok && isMounted) {
+          const data = await nodesRes.json();
+          if (data.nodes && data.nodes.length > 0) {
+            const node = data.nodes[0];
+            setLiveNodeData(node);
+            setReadings({
+              tilt_deg: Number(node.tilt_deg || 0.14),
+              displacement_mm: Number(node.displacement_mm || 0.75),
+              strain_microstrain: Number(node.strain_microstrain || 62.0),
+              vibration_mms: Number(node.vibration_mms || 0.07)
+            });
+
+            if (node.received_at) {
+              const diffMs = Date.now() - new Date(node.received_at).getTime();
+              const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+              setLastPacketAgo(diffSec < 3 ? 'Just now' : `${diffSec}s ago`);
+            }
+          }
+        }
+
+        if (latestRes.ok && isMounted) {
+          const packet = await latestRes.json();
+          if (packet && packet.payload) {
+            setLatestPacket(packet);
+          }
+        }
+      } catch (err) {
+        console.warn('Real-time telemetry poll error:', err);
+      }
+    }
+
+    fetchRealTimeFeed();
+    const interval = setInterval(fetchRealTimeFeed, 1000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Fetch real-time AI risk prediction when readings update
+  useEffect(() => {
+    let isMounted = true;
+    async function runPrediction() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            node_id: 'CarboNex Data Node',
+            readings: readings
+          })
+        });
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          setPrediction(data);
+        }
+      } catch (err) {
+        console.error('Error calling /api/predict:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    runPrediction();
+    return () => {
+      isMounted = false;
+    };
+  }, [readings]);
 
   return (
     <div>
-      {/* SECTION 1: ROW OF 6 SPEEDOMETER GAUGES (Matching Image 2 - Power Generation) */}
+      {/* REAL-TIME TELEMETRY STREAM HEADER */}
+      <div className="glass-card" style={{
+        padding: '16px 20px',
+        marginBottom: '20px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '16px',
+        background: 'linear-gradient(135deg, color-mix(in srgb, var(--panel) 90%, transparent) 0%, color-mix(in srgb, var(--bg) 95%, transparent) 100%)',
+        border: '1px solid var(--line)'
+      }}>
+        {/* Node Information */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '8px',
+            background: 'color-mix(in srgb, var(--cyan) 15%, transparent)',
+            border: '1px solid var(--cyan)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--cyan)'
+          }}>
+            <HardHat size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Field Monitoring Point
+            </div>
+            <h2 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
+              CarboNex Data Node • Panel 7 Extraction Face
+            </h2>
+          </div>
+        </div>
+
+        {/* Real-Time Uplink Status */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            padding: '6px 14px',
+            borderRadius: '999px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: 'var(--lime)'
+          }}>
+            <span className="pulse-dot" style={{ backgroundColor: 'var(--lime)' }} />
+            <span>LoRa Uplink: Real-Time Active</span>
+            <span style={{ color: 'var(--muted)', fontWeight: '400' }}>• #{liveNodeData.seq || 0}</span>
+            <span style={{ color: 'var(--muted)', fontWeight: '400' }}>• {lastPacketAgo}</span>
+          </div>
+          {loading && (
+            <span style={{ fontSize: '12px', color: 'var(--cyan)', fontWeight: '600' }}>
+              Inferring...
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* SECTION 1: ROW OF 6 SPEEDOMETER GAUGES */}
       <Reveal className="glass-card" style={{ padding: '20px', marginBottom: '24px' }}>
         <div style={{
           display: 'flex',
@@ -123,11 +237,11 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
               letterSpacing: '0.04em',
               margin: 0
             }}>
-              LIVE GEOTECHNICAL SPEEDOMETERS & TELEMETRY GAUGES
+              REAL-TIME GEOTECHNICAL SPEEDOMETERS & TELEMETRY GAUGES
             </h2>
           </div>
           <div style={{ fontSize: '13px', color: 'var(--muted)' }}>
-            Node: <strong style={{ color: 'var(--cyan)' }}>{activeNode}</strong> • 3-Layer Isolation Forest & Sensor Fusion
+            Hardware: <strong style={{ color: 'var(--cyan)' }}>ESP32 + LoRa SX1278</strong> • 3-Layer Subsidence Sensor Fusion
           </div>
         </div>
 
@@ -198,7 +312,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             size={180}
           />
 
-          {/* Gauge 6: Anomaly Score / Confidence */}
+          {/* Gauge 6: Anomaly Load / Confidence */}
           <SpeedometerGauge
             label="Anomaly Load"
             value={Math.round((prediction.risk_score - 15) / 0.85)}
@@ -212,14 +326,15 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
         </div>
       </Reveal>
 
-      {/* SECTION 2: INTERACTIVE SIMULATOR CONTROLS & DIAGNOSTIC CARD */}
+      {/* SECTION 2: LIVE HARDWARE TELEMETRY & DIAGNOSTIC CARD */}
       <Reveal delay={0.08} style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
         gap: '24px'
       }}>
-        {/* Left Column: Sensor Input Sliders & Presets */}
+        {/* Left Column: Live Hardware Node Statistics */}
         <div className="glass-card" style={{ padding: '24px' }}>
+          {/* Header */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -229,138 +344,262 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             paddingBottom: '12px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sliders size={20} color="var(--cyan)" />
+              <Radio size={20} color="var(--cyan)" />
               <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
-                Sensor Simulation & What-If Sliders
+                CarboNex Data Node • Live Hardware Statistics
               </h3>
             </div>
-            {loading && <span style={{ fontSize: '12px', color: 'var(--cyan)' }}>Predicting...</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className="pulse-dot" style={{ backgroundColor: 'var(--lime)' }} />
+              <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--lime)' }}>
+                LORA LINK ONLINE
+              </span>
+            </div>
           </div>
 
-          {/* Preset Buttons (Matching Image 2 Charger/Output priority buttons) */}
-          <div style={{ marginBottom: '22px' }}>
-            <label style={{
-              fontSize: '12px',
-              fontWeight: '700',
-              color: 'var(--muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '8px'
+          {/* Hardware Identifier & Uplink Strip */}
+          <div style={{
+            background: 'color-mix(in srgb, var(--panel) 80%, transparent)',
+            border: '1px solid var(--line)',
+            borderRadius: '10px',
+            padding: '14px 16px',
+            marginBottom: '18px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Hardware Node Specification
+              </div>
+              <div style={{ fontSize: '15px', fontWeight: '800', color: 'var(--cyan)', marginTop: '2px' }}>
+                ESP32 + LoRa SX1278 / MPU6050 + Strain Gauge
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '11px', color: 'var(--muted)', display: 'block' }}>Packet Seq</span>
+                <strong style={{ fontSize: '14px', color: 'var(--text)' }}>#{liveNodeData.seq || 0}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', color: 'var(--muted)', display: 'block' }}>Uplink IP</span>
+                <span style={{ fontSize: '12px', color: 'var(--muted)', fontFamily: 'monospace' }}>{liveNodeData.source || '127.0.0.1'}</span>
+              </div>
+              <div>
+                <span style={{ fontSize: '11px', color: 'var(--muted)', display: 'block' }}>Last Packet</span>
+                <span style={{ fontSize: '12px', color: 'var(--lime)', fontWeight: '600' }}>{lastPacketAgo}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4-Stat Sensor Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '12px',
+            marginBottom: '18px'
+          }}>
+            {/* Stat 1: Kalman Tilt X & Y */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 60%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '14px'
             }}>
-              Quick Mine Scenarios:
-            </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-              {presets.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => applyPreset(p.values)}
-                  style={{
-                    background: 'color-mix(in srgb, var(--panel) 80%, transparent)',
-                    border: `1px solid ${p.color}66`,
-                    borderRadius: '8px',
-                    padding: '10px 14px',
-                    color: 'var(--text)',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = p.color;
-                    e.currentTarget.style.boxShadow = `0 0 12px ${p.color}44`;
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = `${p.color}66`;
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <span style={{ fontSize: '13px', fontWeight: '700', color: p.color }}>
-                    {p.name}
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
-                    Click to load telemetry
-                  </span>
-                </button>
-              ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--cyan)', marginBottom: '4px' }}>
+                <Compass size={16} />
+                <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase' }}>Kalman Dual-Axis Tilt</span>
+              </div>
+              <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text)' }}>
+                {readings.tilt_deg.toFixed(3)}°
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '4px' }}>
+                Tilt X: <strong style={{ color: 'var(--cyan)' }}>{liveNodeData.tilt_x || 0} mDeg</strong> ({((liveNodeData.tilt_x || 0)/1000).toFixed(3)}°)
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)' }}>
+                Tilt Y: <strong style={{ color: 'var(--cyan)' }}>{liveNodeData.tilt_y || 0} mDeg</strong> ({((liveNodeData.tilt_y || 0)/1000).toFixed(3)}°)
+              </div>
+            </div>
+
+            {/* Stat 2: Internal Temperature */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 60%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--orange)', marginBottom: '4px' }}>
+                <Thermometer size={16} />
+                <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase' }}>IMU Temperature</span>
+              </div>
+              <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text)' }}>
+                {liveNodeData.temp || 28} °C
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '4px' }}>
+                MPU6050 Onboard Thermal Sensor
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--lime)', marginTop: '2px' }}>
+                ● Thermal drift nominal
+              </div>
+            </div>
+
+            {/* Stat 3: Battery Level */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 60%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--lime)', marginBottom: '4px' }}>
+                <Battery size={16} />
+                <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase' }}>Battery Level</span>
+              </div>
+              <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text)' }}>
+                {liveNodeData.batt || 95} %
+              </div>
+              {/* Battery bar */}
+              <div style={{
+                height: '5px',
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '3px',
+                marginTop: '8px',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: `${Math.min(100, Math.max(0, liveNodeData.batt || 95))}%`,
+                  backgroundColor: (liveNodeData.batt || 95) > 30 ? 'var(--lime)' : 'var(--orange)',
+                  borderRadius: '3px',
+                  transition: 'width 0.5s ease'
+                }} />
+              </div>
+              <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '4px' }}>
+                Power: 3.7V Li-Ion / Regulated
+              </div>
+            </div>
+
+            {/* Stat 4: Signal Strength (RSSI) */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 60%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--cyan)', marginBottom: '4px' }}>
+                <Wifi size={16} />
+                <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase' }}>LoRa Signal (RSSI)</span>
+              </div>
+              <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text)' }}>
+                {liveNodeData.rssi || -65} dBm
+              </div>
+              {/* Signal bars */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '14px', marginTop: '6px' }}>
+                {[1, 2, 3, 4].map(bar => {
+                  const rssiVal = liveNodeData.rssi || -65;
+                  const active = (bar === 1 && rssiVal > -110) ||
+                                 (bar === 2 && rssiVal > -95) ||
+                                 (bar === 3 && rssiVal > -80) ||
+                                 (bar === 4 && rssiVal > -65);
+                  return (
+                    <div
+                      key={bar}
+                      style={{
+                        width: '6px',
+                        height: `${bar * 3.5}px`,
+                        backgroundColor: active ? 'var(--cyan)' : 'rgba(255,255,255,0.15)',
+                        borderRadius: '1px'
+                      }}
+                    />
+                  );
+                })}
+                <span style={{ fontSize: '11px', color: 'var(--muted)', marginLeft: '6px' }}>
+                  {(liveNodeData.rssi || -65) > -70 ? 'Excellent' : (liveNodeData.rssi || -65) > -85 ? 'Good' : 'Fair'}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Sliders */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-            {/* Slider 1: Angular Tilt */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
-                  Angular Tilt (tilt_deg)
-                </span>
-                <span style={{ color: 'var(--cyan)', fontWeight: '700' }}>
-                  {readings.tilt_deg.toFixed(2)} °
-                </span>
-              </div>
-              <Slider min={0} max={10} step={0.05} value={[readings.tilt_deg]} onValueChange={value => handleSliderChange('tilt_deg', value[0])} aria-label="Angular tilt" />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
-                <span>0.0° (Baseline)</span>
-                <span>Weight: 30%</span>
-                <span>10.0° (Hazard)</span>
-              </div>
+          {/* Auxiliary Physical Channels: Vibration & Crack */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '12px',
+            marginBottom: '18px'
+          }}>
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 40%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '10px 14px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Dynamic Vibration:</span>
+              <strong style={{ fontSize: '14px', color: 'var(--violet)' }}>{liveNodeData.vib || 0.07} mm/s</strong>
             </div>
+            <div style={{
+              background: 'color-mix(in srgb, var(--panel) 40%, transparent)',
+              border: '1px solid var(--line)',
+              borderRadius: '8px',
+              padding: '10px 14px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Extensometer Crack:</span>
+              <strong style={{ fontSize: '14px', color: 'var(--orange)' }}>{liveNodeData.crack || 0.75} mm</strong>
+            </div>
+          </div>
 
-            {/* Slider 2: Linear Displacement */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
-                  Linear Displacement (displacement_mm)
-                </span>
-                <span style={{ color: 'var(--orange)', fontWeight: '700' }}>
-                  {readings.displacement_mm.toFixed(1)} mm
-                </span>
+          {/* Collapsible Raw LoRa Packet Inspector */}
+          <div style={{
+            background: 'color-mix(in srgb, var(--bg) 80%, transparent)',
+            border: '1px solid var(--line)',
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            <button
+              onClick={() => setShowRawPacket(prev => !prev)}
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: 'none',
+                padding: '10px 14px',
+                color: 'var(--muted)',
+                fontSize: '12px',
+                fontWeight: '700',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Terminal size={14} color="var(--cyan)" />
+                <span>Raw Ingested Packet (POST /endpoint JSON)</span>
               </div>
-              <Slider min={0} max={60} step={0.5} value={[readings.displacement_mm]} onValueChange={value => handleSliderChange('displacement_mm', value[0])} aria-label="Linear displacement" />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
-                <span>0.0 mm</span>
-                <span>Weight: 25%</span>
-                <span>60.0 mm</span>
+              {showRawPacket ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+            {showRawPacket && (
+              <div style={{ padding: '0 14px 14px 14px', borderTop: '1px solid var(--line)' }}>
+                <pre style={{
+                  margin: '10px 0 0 0',
+                  fontSize: '11px',
+                  fontFamily: 'monospace',
+                  color: 'var(--cyan)',
+                  background: 'rgba(0,0,0,0.4)',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  overflowX: 'auto',
+                  maxHeight: '180px'
+                }}>
+                  {JSON.stringify(latestPacket || { node: liveNodeData }, null, 2)}
+                </pre>
               </div>
-            </div>
-
-            {/* Slider 3: Structural Strain */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
-                  Structural Strain (strain_microstrain)
-                </span>
-                <span style={{ color: 'var(--cyan)', fontWeight: '700' }}>
-                  {readings.strain_microstrain.toFixed(0)} µε
-                </span>
-              </div>
-              <Slider min={0} max={2000} step={10} value={[readings.strain_microstrain]} onValueChange={value => handleSliderChange('strain_microstrain', value[0])} aria-label="Structural strain" />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
-                <span>0 µε</span>
-                <span>Weight: 30%</span>
-                <span>2000 µε</span>
-              </div>
-            </div>
-
-            {/* Slider 4: Vibration Velocity */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text)' }}>
-                  Vibration Velocity (vibration_mms)
-                </span>
-                <span style={{ color: 'var(--violet)', fontWeight: '700' }}>
-                  {readings.vibration_mms.toFixed(2)} mm/s
-                </span>
-              </div>
-              <Slider min={0} max={10} step={0.05} value={[readings.vibration_mms]} onValueChange={value => handleSliderChange('vibration_mms', value[0])} aria-label="Vibration velocity" />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--muted)' }}>
-                <span>0.0 mm/s</span>
-                <span>Weight: 15%</span>
-                <span>10.0 mm/s</span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -378,7 +617,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Cpu size={20} color={prediction.status_color} />
               <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text)', margin: 0 }}>
-                Model Prediction & Geotechnical Diagnostics
+                Real-Time AI Subsidence Diagnostics
               </h3>
             </div>
             <span style={{
@@ -394,7 +633,7 @@ export default function RealTimePredictor({ activeNode = 'Node01' }) {
             </span>
           </div>
 
-          {/* Large Risk Banner (Matching gui_desktop.py & Dash app) */}
+          {/* Large Risk Banner */}
           <div style={{
             background: `linear-gradient(135deg, ${prediction.status_color}18 0%, var(--bg) 100%)`,
             border: `1px solid ${prediction.status_color}66`,

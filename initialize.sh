@@ -33,6 +33,15 @@ echo "Running Python tests..."
     "$PYTHON" -m unittest test_suite
 )
 
+echo "Building Coal Mine GIS module..."
+if [ -d "$ROOT_DIR/frontend/coal-mine-gis" ]; then
+    if [ ! -d "$ROOT_DIR/frontend/coal-mine-gis/node_modules" ]; then
+        echo "Installing Coal Mine GIS dependencies..."
+        npm install --prefix "$ROOT_DIR/frontend/coal-mine-gis"
+    fi
+    npm run build --prefix "$ROOT_DIR/frontend/coal-mine-gis"
+fi
+
 echo "Linting and building frontend..."
 npm run lint --prefix "$ROOT_DIR/frontend"
 npm run build --prefix "$ROOT_DIR/frontend"

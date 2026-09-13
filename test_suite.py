@@ -184,5 +184,63 @@ class TestPipelineInference(unittest.TestCase):
             os.remove(test_path)
 
 
+class TestEspLoraIntegration(unittest.TestCase):
+    """Test merged ESP32 / LoRa ingestion routes and live telemetry fusion."""
+
+    @classmethod
+    def setUpClass(cls):
+        import server
+        cls.app = server.app
+        cls.client = server.app.test_client()
+
+    def test_endpoint_json_ingestion(self):
+        payload = {
+            "node_id": "Node01",
+            "seq": 101,
+            "tilt_x": 220,
+            "tilt_y": 90,
+            "temp": 29,
+            "batt": 94,
+            "vib": 0.12,
+            "crack": 1.1,
+            "rssi": -66
+        }
+        res = self.client.post("/endpoint", json=payload)
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["status"], "received")
+        self.assertEqual(data["node_id"], "Node01")
+        self.assertIn("risk_score", data)
+        self.assertIn("risk_band", data)
+
+    def test_latest_packet_route(self):
+        res = self.client.get("/latest")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertIn("payload", data)
+        self.assertIn("received_at", data)
+
+    def test_api_live_nodes_route(self):
+        res = self.client.get("/api/live-nodes")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertGreaterEqual(data["count"], 1)
+        self.assertIn("Node01", data["active_node_ids"])
+        node01 = next((n for n in data["nodes"] if n["node_id"] == "Node01"), None)
+        self.assertIsNotNone(node01)
+        self.assertIn("tilt_deg", node01)
+        self.assertIn("rssi", node01)
+        self.assertIn("temp", node01)
+        self.assertIn("batt", node01)
+
+    def test_api_simulate_packet(self):
+        res = self.client.post("/api/simulate-packet", json={"node_id": "Node02", "tilt_x": 300, "tilt_y": 150})
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["node_id"], "Node02")
+        self.assertIn("risk_score", data)
+
+
 if __name__ == "__main__":
     unittest.main()
+

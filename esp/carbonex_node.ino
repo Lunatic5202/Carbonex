@@ -9,9 +9,9 @@
 const char* ssid = "Nothing";
 const char* password = "12345678";
 
-// Receiver running on the base/server computer
-const char* receiverUrl = "http://10.85.219.17:8000/endpoint";
-const char* nodeId = "Node01";
+// Receiver running on the base/server computer (CarboNex Unified Backend, default port 5000)
+const char* receiverUrl = "http://10.85.219.250:5000/endpoint";
+const char* nodeId = "CarboNex Data Node";
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
