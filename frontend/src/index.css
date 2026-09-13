@@ -152,3 +152,55 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
+/* Trionn Intro Explode */
+.trionn-intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: #050a14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  overflow: hidden;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+.trionn-intro-content {
+  text-align: center;
+  max-width: 1200px;
+  padding: 0 40px;
+  transform-origin: center center;
+}
+
+.trionn-intro-q {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+  color: #c9ff3d;
+  will-change: transform, opacity;
+}
+
+.trionn-intro-points {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.trionn-intro-points p {
+  will-change: transform, opacity;
+  margin: 0;
+}
+
+.trionn-intro-points strong {
+  color: #6ae8ff;
+  font-weight: 600;
+}
