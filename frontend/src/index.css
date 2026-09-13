@@ -2853,3 +2853,210 @@ h1 em {
     padding: 12px 18px;
   }
 }
+
+/* =====================================================
+   INFINITE-LAYERS GRID  (port of Codrops / Jorge Capillo
+   "infinite layers grid" — MIT) — rendered as the
+   "why we pursue this" landing band
+   ===================================================== */
+.ilg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+}
+.ilg.dragging { cursor: grabbing; }
+.ilg-grid {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.ilg-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+}
+.ilg-item-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+.ilg-item-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+.ilg-cap {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  z-index: 2;
+  max-width: 78%;
+  color: #eaffd0;
+  font: 600 10px/1.4 "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(4,10,4,.9), 0 0 14px rgba(3,7,3,.95);
+  background: linear-gradient(90deg, rgba(6,12,5,.88), rgba(6,12,5,.55) 72%, transparent);
+  padding: 6px 9px;
+  border-left: 2px solid rgba(201,255,61,.55);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .5s, transform .5s;
+}
+.ilg-cap.visible { opacity: 1; transform: none; }
+
+/* "why we pursue this" — two reason decks over the layers grid */
+.ldy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 0 6vw 104px;
+  min-height: 720px;
+}
+.ldy-grid-deck {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  will-change: transform;
+}
+.ldy-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .24;
+  pointer-events: none;
+}
+.ldy-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 2fr);
+  grid-template-rows: auto auto;
+  gap: 30px 44px;
+  align-items: start;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+.ldy-heading {
+  grid-column: 1 / -1;
+  max-width: 860px;
+}
+.ldy-title {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: .01em;
+  color: #eaffd0;
+}
+.ldy-title em {
+  font-style: normal;
+  color: #c9ff3d;
+}
+.ldy-blocks {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+}
+.ldy-block {
+  padding: 30px 32px 32px;
+  background: #0b140f;
+  border: 1px solid rgba(201,255,61,.16);
+  border-radius: 16px;
+}
+.ldy-block-alt {
+  background: #0d1712;
+}
+.ldy-reasons {
+  min-width: 0;
+}
+.ldy-block-head h3 {
+  margin: 8px 0 6px;
+  font-size: 17px;
+  letter-spacing: .02em;
+  color: #eaffd0;
+}
+.ldy-block-head p {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #a9b6a6;
+}
+.ldy-kicker {
+  display: inline-block;
+  font: 600 9px/1 "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: .16em;
+  color: #c9ff3d;
+  padding: 5px 8px;
+  border: 1px solid rgba(201,255,61,.35);
+  border-radius: 5px;
+  background: rgba(201,255,61,.07);
+}
+.ldy-card {
+  display: flex;
+  gap: 14px;
+  padding: 17px 0;
+  margin-top: 14px;
+  border-top: 1px solid rgba(201,255,61,.12);
+}
+.ldy-card-icon {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(201,255,61,.35);
+  border-radius: 10px;
+  color: #c9ff3d;
+  background: rgba(201,255,61,.06);
+}
+.ldy-card-body strong {
+  display: block;
+  font-size: 13px;
+  letter-spacing: .04em;
+  color: #eaffd0;
+}
+.ldy-card-body p {
+  margin: 4px 0 0;
+  max-width: 44ch;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #a9b6a6;
+}
+.ldy-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(201,255,61,.18);
+}
+.ldy-stat strong {
+  font-size: 24px;
+  color: #c9ff3d;
+  letter-spacing: .02em;
+}
+.ldy-stat span {
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: #7f8d7c;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+@media (max-width: 960px) {
+  .ldy-inner { grid-template-columns: minmax(0, 1fr); }
+  .ldy-blocks { grid-template-columns: minmax(0, 1fr); }
+  .ldy-grid { opacity: .14; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ilg-cap { opacity: 1; transform: none; }
+  .ilg-item { transform: none !important; }
+}
