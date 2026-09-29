@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SpeedometerGauge from './SpeedometerGauge';
 import Reveal from './Reveal';
+import { useDataSource } from '../lib/dataSource';
+import { getTestLiveNode, getTestPrediction, TEST_LIVE_STEP_MS, TEST_NODE_ID } from '../lib/testData';
 import {
   Cpu,
   Radio,
@@ -11,8 +13,7 @@ import {
   Terminal,
   ChevronDown,
   ChevronUp,
-  Activity,
-  Zap,
+  FlaskConical,
   HardHat
 } from 'lucide-react';
 
@@ -23,7 +24,8 @@ const RISK_BANDS = [
   { from: 75, to: 100, color: 'var(--lime)' }
 ];
 
-export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' }) {
+export default function RealTimePredictor({ activeNode: _activeNode = 'CarboNex Data Node' }) {
+  const { isTest } = useDataSource();
   // Real-time live node telemetry from ESP32 / LoRa SX1278 hardware
   const [liveNodeData, setLiveNodeData] = useState({
     node_id: 'CarboNex Data Node',
@@ -74,8 +76,39 @@ export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' })
   // Continuously poll real-time telemetry from ESP32 / LoRa backend
   useEffect(() => {
     let isMounted = true;
+    const startedAt = Date.now();
 
     async function fetchRealTimeFeed() {
+      if (isTest) {
+        const node = getTestLiveNode(TEST_NODE_ID, Date.now() - startedAt);
+        if (!isMounted) return;
+        setLiveNodeData(node);
+        setReadings({
+          tilt_deg: node.tilt_deg,
+          displacement_mm: node.displacement_mm,
+          strain_microstrain: node.strain_microstrain,
+          vibration_mms: node.vibration_mms
+        });
+        setLatestPacket({
+          received_at: node.received_at,
+          source: node.source,
+          content_type: 'application/json',
+          payload: {
+            node_id: node.node_id,
+            seq: node.seq,
+            tilt_x: node.tilt_x,
+            tilt_y: node.tilt_y,
+            temp: node.temp,
+            batt: node.batt,
+            vib: node.vib,
+            crack: node.crack,
+            rssi: node.rssi
+          }
+        });
+        setLastPacketAgo('Just now');
+        return;
+      }
+
       try {
         const [nodesRes, latestRes] = await Promise.all([
           fetch('/api/live-nodes'),
@@ -114,17 +147,24 @@ export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' })
     }
 
     fetchRealTimeFeed();
-    const interval = setInterval(fetchRealTimeFeed, 1000);
+    // In test mode the generator only advances one synthetic day every
+    // TEST_LIVE_STEP_MS, so polling faster than that would be wasted work.
+    const interval = setInterval(fetchRealTimeFeed, isTest ? TEST_LIVE_STEP_MS / 2 : 1000);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [isTest]);
 
   // Fetch real-time AI risk prediction when readings update
   useEffect(() => {
     let isMounted = true;
     async function runPrediction() {
+      if (isTest) {
+        setPrediction(getTestPrediction(TEST_NODE_ID, readings));
+        return;
+      }
+
       setLoading(true);
       try {
         const res = await fetch('/api/predict', {
@@ -150,7 +190,7 @@ export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' })
     return () => {
       isMounted = false;
     };
-  }, [readings]);
+  }, [readings, isTest]);
 
   return (
     <div>
@@ -197,16 +237,22 @@ export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' })
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(16, 185, 129, 0.1)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
+            background: isTest ? 'rgba(255, 138, 74, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+            border: isTest ? '1px solid rgba(255, 138, 74, 0.35)' : '1px solid rgba(16, 185, 129, 0.3)',
             padding: '6px 14px',
             borderRadius: '999px',
             fontSize: '12px',
             fontWeight: '700',
-            color: 'var(--lime)'
+            color: isTest ? 'var(--orange)' : 'var(--lime)'
           }}>
-            <span className="pulse-dot" style={{ backgroundColor: 'var(--lime)' }} />
-            <span>LoRa Uplink: Real-Time Active</span>
+            <span className="pulse-dot" style={{ backgroundColor: isTest ? 'var(--orange)' : 'var(--lime)' }} />
+            {isTest ? (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <FlaskConical size={13} /> Test Data · Synthetic Telemetry
+              </span>
+            ) : (
+              <span>LoRa Uplink: Real-Time Active</span>
+            )}
             <span style={{ color: 'var(--muted)', fontWeight: '400' }}>• #{liveNodeData.seq || 0}</span>
             <span style={{ color: 'var(--muted)', fontWeight: '400' }}>• {lastPacketAgo}</span>
           </div>
@@ -350,9 +396,9 @@ export default function RealTimePredictor({ activeNode = 'CarboNex Data Node' })
               </h3>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="pulse-dot" style={{ backgroundColor: 'var(--lime)' }} />
-              <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--lime)' }}>
-                LORA LINK ONLINE
+              <span className="pulse-dot" style={{ backgroundColor: isTest ? 'var(--orange)' : 'var(--lime)' }} />
+              <span style={{ fontSize: '12px', fontWeight: '700', color: isTest ? 'var(--orange)' : 'var(--lime)' }}>
+                {isTest ? 'SIMULATED FEED' : 'LORA LINK ONLINE'}
               </span>
             </div>
           </div>

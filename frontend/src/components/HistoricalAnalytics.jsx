@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Reveal from './Reveal';
-import { Gauge, AlertTriangle, TrendingUp, Radar } from 'lucide-react';
+import { Gauge, AlertTriangle, TrendingUp, Radar, FlaskConical } from 'lucide-react';
+import { useDataSource } from '../lib/dataSource';
+import { getTestHistory } from '../lib/testData';
 
 export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
+  const { isTest } = useDataSource();
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dayRange, setDayRange] = useState([1, 365]);
@@ -11,11 +14,15 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
 
   useEffect(() => {
     fetchHistory();
-  }, [activeNode]);
+  }, [activeNode, isTest]);
 
   const fetchHistory = async () => {
     setLoading(true);
     try {
+      if (isTest) {
+        setHistoryData(getTestHistory(activeNode));
+        return;
+      }
       const res = await fetch(`/api/history?node_id=${activeNode}&start_day=1&end_day=365`);
       if (res.ok) {
         const data = await res.json();
@@ -250,6 +257,26 @@ export default function HistoricalAnalytics({ activeNode = 'Node01' }) {
               4-Tier Domain Zones: Normal (0-25), Watch (26-50), Warning (51-75), Critical (76-100)
             </p>
           </div>
+
+          {/* Data source chip */}
+          {isTest && (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: '999px',
+              border: '1px solid rgba(255, 138, 74, 0.35)',
+              background: 'rgba(255, 138, 74, 0.1)',
+              color: 'var(--orange)',
+              fontSize: '11px',
+              fontWeight: '800',
+              letterSpacing: '0.07em',
+              whiteSpace: 'nowrap'
+            }}>
+              <FlaskConical size={13} /> TEST DATA
+            </span>
+          )}
 
           {/* Day range scrubber */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

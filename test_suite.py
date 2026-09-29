@@ -195,7 +195,7 @@ class TestEspLoraIntegration(unittest.TestCase):
 
     def test_endpoint_json_ingestion(self):
         payload = {
-            "node_id": "Node01",
+            "node_id": "CarboNex Data Node",
             "seq": 101,
             "tilt_x": 220,
             "tilt_y": 90,
@@ -209,9 +209,25 @@ class TestEspLoraIntegration(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data = res.get_json()
         self.assertEqual(data["status"], "received")
-        self.assertEqual(data["node_id"], "Node01")
+        self.assertEqual(data["node_id"], "CarboNex Data Node")
         self.assertIn("risk_score", data)
         self.assertIn("risk_band", data)
+
+    def test_endpoint_ingestion_standardizes_foreign_node_id(self):
+        payload = {
+            "node_id": "Node99",
+            "seq": 102,
+            "tilt_x": 220,
+            "tilt_y": 90,
+            "temp": 29,
+            "batt": 94,
+            "vib": 0.12,
+            "crack": 1.1,
+            "rssi": -66
+        }
+        res = self.client.post("/endpoint", json=payload)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.get_json()["node_id"], "CarboNex Data Node")
 
     def test_latest_packet_route(self):
         res = self.client.get("/latest")
@@ -225,19 +241,19 @@ class TestEspLoraIntegration(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data = res.get_json()
         self.assertGreaterEqual(data["count"], 1)
-        self.assertIn("Node01", data["active_node_ids"])
-        node01 = next((n for n in data["nodes"] if n["node_id"] == "Node01"), None)
-        self.assertIsNotNone(node01)
-        self.assertIn("tilt_deg", node01)
-        self.assertIn("rssi", node01)
-        self.assertIn("temp", node01)
-        self.assertIn("batt", node01)
+        self.assertIn("CarboNex Data Node", data["active_node_ids"])
+        node = next((n for n in data["nodes"] if n["node_id"] == "CarboNex Data Node"), None)
+        self.assertIsNotNone(node)
+        self.assertIn("tilt_deg", node)
+        self.assertIn("rssi", node)
+        self.assertIn("temp", node)
+        self.assertIn("batt", node)
 
     def test_api_simulate_packet(self):
-        res = self.client.post("/api/simulate-packet", json={"node_id": "Node02", "tilt_x": 300, "tilt_y": 150})
+        res = self.client.post("/api/simulate-packet", json={"tilt_x": 300, "tilt_y": 150})
         self.assertEqual(res.status_code, 200)
         data = res.get_json()
-        self.assertEqual(data["node_id"], "Node02")
+        self.assertEqual(data["node_id"], "CarboNex Data Node")
         self.assertIn("risk_score", data)
 
 

@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import SpeedometerGauge from './SpeedometerGauge';
 import Reveal from './Reveal';
-import { Play, Pause, SkipForward, RotateCcw, Radio, ShieldAlert } from 'lucide-react';
+import { Play, Pause, SkipForward, RotateCcw, Radio, ShieldAlert, FlaskConical } from 'lucide-react';
+import { useDataSource } from '../lib/dataSource';
+import { getTestHistory } from '../lib/testData';
 
 const RISK_BANDS = [
   { from: 0, to: 25, color: 'var(--cyan)' },
@@ -12,6 +14,7 @@ const RISK_BANDS = [
 ];
 
 export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
+  const { isTest } = useDataSource();
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [currentDay, setCurrentDay] = useState(1);
@@ -23,6 +26,10 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
   useEffect(() => {
     async function loadData() {
       try {
+        if (isTest) {
+          setHistoryData(getTestHistory(activeNode));
+          return;
+        }
         const res = await fetch(`/api/history?node_id=${activeNode}&start_day=1&end_day=365`);
         if (res.ok) {
           const data = await res.json();
@@ -36,7 +43,7 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
     setCurrentDay(1);
     setAlerts([]);
     setIsPlaying(false);
-  }, [activeNode]);
+  }, [activeNode, isTest]);
 
   // Current active record
   const currentRecord = historyData.find(d => d.day === currentDay) || historyData[0] || {
@@ -220,10 +227,29 @@ export default function LiveReplaySimulator({ activeNode = 'Node01' }) {
           <Radio size={16} color={isPlaying ? 'var(--cyan)' : 'var(--muted)'} className={isPlaying ? 'pulse-dot' : ''} />
           <div>
             <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase' }}>Simulation Timeline:</div>
-            <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--cyan)', }}>
+            <div style={{ fontSize: '18px', fontWeight: '900', color: 'var(--cyan)' }}>
               Day {currentDay} / 365
             </div>
           </div>
+          {isTest && (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              marginLeft: '6px',
+              padding: '4px 10px',
+              borderRadius: '999px',
+              border: '1px solid rgba(255, 138, 74, 0.35)',
+              background: 'rgba(255, 138, 74, 0.1)',
+              color: 'var(--orange)',
+              fontSize: '10px',
+              fontWeight: '800',
+              letterSpacing: '0.07em',
+              whiteSpace: 'nowrap'
+            }}>
+              <FlaskConical size={12} /> TEST DATA
+            </span>
+          )}
         </div>
       </Reveal>
 
