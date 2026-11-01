@@ -7,7 +7,7 @@
 
 | Lockfile | Package entries | Missing license fields |
 |---|---:|---:|
-| `frontend/package-lock.json` | 90 | 0 |
+| `frontend/package-lock.json` | 90 | 1 |
 | `frontend/coal-mine-gis/package-lock.json` | 155 | 1 |
 
 ### Items requiring review
