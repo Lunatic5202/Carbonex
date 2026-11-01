@@ -1,105 +1,101 @@
-# CarboNex
+# CarboNex — Subsidence Monitoring & Early Warning
 
-## AI-enabled mine subsidence monitoring and early warning
+CarboNex is a prototype for monitoring potential ground movement in underground coal mines. The repository combines sensor-fusion modelling, historical data exploration, a Dash dashboard, and a Flask API/static frontend server.
 
-CarboNex is a proposed low-cost, real-time monitoring system for underground coal mines in India. It combines distributed wireless sensor nodes, AI/ML-based anomaly detection, GIS risk mapping, and early-warning workflows to help identify potentially dangerous ground movement before it becomes a serious safety event.
+> **Safety disclaimer:** This is a research and engineering prototype, not a certified mine-safety instrument. Its risk scores are experimental indicators and must not replace approved monitoring systems, qualified inspections, regulatory procedures or emergency response.
 
-> **Smart India Hackathon 2025**  
-> Problem Statement ID: **SIH25025**  
-> Theme: **Smart Automation**  
-> Category: **Hardware**  
-> Team: **CarboNex**
+## What is implemented
 
-## Problem
+- **Sensor fusion model** — an unsupervised Isolation Forest layer for node-level anomaly detection, rolling trend features and weighted multi-sensor risk scoring.
+- **Sensor inputs** — tilt, displacement, strain and vibration measurements.
+- **Risk bands** — NORMAL (0–25), WATCH (26–50), WARNING (51–75) and CRITICAL (76–100).
+- **Dash dashboard** — historical sensor explorer, risk visualizations, prediction/what-if views, replay simulation and batch CSV scoring/export.
+- **Flask API** — accepts ESP32-style telemetry, evaluates readings through the sensor-fusion pipeline and serves the built frontend.
+- **Model persistence** — joblib model artifacts under `models/` when generated.
 
-Underground mining environments are difficult to monitor continuously. Manual inspections and unreliable connectivity can delay detection of deformation and subsidence risks. A practical system must use affordable hardware, tolerate communication failures, reduce false alarms, and present risk information clearly enough to support timely decisions.
+The repository includes CSV datasets and a pre-scored dataset for development. Their provenance and representativeness should be checked before treating results as field evidence.
 
-## Proposed solution
-
-CarboNex uses a distributed, self-healing wireless sensor network deployed across mine panels. Each smart node measures ground-movement indicators and sends telemetry to a central gateway. The platform is designed to:
-
-1. Collect deformation-related measurements continuously.
-2. Reroute data through neighboring nodes when a LoRa path fails.
-3. Detect unusual multi-sensor behavior against learned regional baselines.
-4. Analyze deformation rate, acceleration, and neighboring-node behavior.
-5. Predict areas with elevated subsidence risk.
-6. Display risk through GIS thermal mapping.
-7. Issue early warnings for inspection and mitigation.
-
-## System concept
+## Architecture
 
 ```text
-[Sensor nodes]
- ESP32 + LoRa + motion/strain sensing
-          |
-          v
-[Self-healing LoRa mesh]
-          |
-          v
-[Gateway and telemetry]
-          |
-          v
-[AI/ML detection and prediction]
-          |
-          +--> [GIS risk map]
-          +--> [Early-warning workflow]
+ESP32 / sensor telemetry
+        |
+        v
+Flask API  -----> live packet state and node history
+        |                         |
+        v                         v
+SubsidenceSensorFusion <---- historical sensor data
+        |
+        +---- anomaly detection
+        +---- trend / acceleration features
+        +---- weighted risk score and diagnostic report
+        |
+        +----> React dashboard / GIS view
+        +----> Dash analysis dashboard
 ```
 
-## Initial technical approach
+## Stack
 
-The proposal identifies the following prototype hardware:
+- Python
+- NumPy, pandas, scikit-learn and joblib
+- Flask and Flask-CORS
+- Dash and Plotly
+- React frontend assets (served from `frontend/dist` by the Flask server)
 
-| Component | Role |
+## Run locally
+
+Requires Python 3 and the dependencies in `requirements.txt`.
+
+```bash
+python -m venv .venv
+# macOS / Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+```
+
+Run the analysis dashboard:
+
+```bash
+python app.py
+```
+
+Run the Flask API and static frontend server in a separate process when working with telemetry/API integration:
+
+```bash
+python server.py
+```
+
+Check the startup output for the actual local port. Build the React frontend before expecting the Flask server to serve the production UI from `frontend/dist`.
+
+## Main files
+
+| Path | Purpose |
 | --- | --- |
-| ESP32 | Embedded controller and sensor-node processing |
-| LoRa SX1278 | Long-range wireless telemetry |
-| MPU6050 | Accelerometer and gyroscope measurements |
-| Strain gauge | Stretch and deformation measurement |
+| `subsidence_model.py` | Sensor-fusion model, features, risk bands and diagnostics |
+| `app.py` | Dash historical-analysis and simulation dashboard |
+| `server.py` | Flask telemetry API and static frontend server |
+| `frontend/` | Browser dashboard |
+| `esp/` | Embedded/ESP-side code |
+| `models/` | Generated model artifacts |
+| `*_sensor_data*.csv` | Development sensor datasets |
+| `train_and_evaluate.py` | Model training/evaluation workflow |
+| `test_suite.py` | Project test suite |
 
-The implementation should evolve through calibration, connectivity tests, field trials, and safety review.
+## Development and validation
 
-## Feasibility and risks
+```bash
+python test_suite.py
+python train_and_evaluate.py
+```
 
-Key engineering priorities include rugged enclosures, protected connectors, reliable sensor mounting, periodic calibration, modular gateways, compact telemetry, and spatial correlation across neighboring nodes.
+Review the scripts' arguments and data expectations before running them. Validate sensor calibration, time synchronization, missing data, false alarms, model drift and communications failure modes before any field trial.
 
-| Risk | Mitigation direction |
-| --- | --- |
-| Harsh field conditions | Rugged enclosure, protected connectors, suitable mounting, and calibration. |
-| Scaling from prototype to mine-wide deployment | Modular architecture, hierarchical gateways, and scalable telemetry. |
-| False alarms | Correlate neighboring-node measurements and use regional baselines. |
-| Connectivity failures | Self-healing mesh routing and gateway redundancy where practical. |
+## Hardware concept
 
-## Expected impact
-
-CarboNex is intended to improve miner and community safety through earlier warnings, faster identification of high-risk zones, and reduced dependence on delayed manual monitoring. Future environmental layers could include water-body and coal-fire risk. Temporal monitoring may also help authorities identify unusual ground activity around suspected unauthorized mining areas.
-
-These outputs must support—not replace—qualified inspections, approved mine-safety procedures, professional assessment, and applicable regulatory requirements.
-
-## Project status
-
-This repository is documentation-first and ready for implementation work in the following areas:
-
-- Sensor-node firmware and calibration utilities.
-- LoRa mesh communication and gateway software.
-- Telemetry storage and validation.
-- Anomaly detection and subsidence-risk modeling.
-- GIS visualization and alerting.
-- Hardware test procedures and field documentation.
+The proposed node design references ESP32, LoRa SX1278, MPU6050 and strain sensing. Hardware deployment, mesh reliability, sensor calibration and surveyed node placement require real-world verification; the dashboard alone does not establish that a live mine deployment exists.
 
 ## Contributing
 
-Read [CONTRIBUTOR.md](CONTRIBUTOR.md) before opening a change. Contributions should document hardware assumptions, data limitations, test evidence, and safety implications.
-
-## License
-
-No project license has been selected yet. Until a license is added, reuse is subject to the repository owner's default rights.
-
-## Disclaimer
-
-CarboNex is a project proposal and engineering prototype concept. It is not a certified mine-safety instrument and must not be used as a substitute for regulatory compliance, professional assessment, approved monitoring systems, or emergency procedures.
-
-## References
-
-The project scope and technical concept are based on the supplied CarboNex Smart India Hackathon idea-submission presentation, which references research on subsidence management and surface-deformation monitoring in Indian coalfields.
-
-[1]: 26025_CarboNex.pptx "CarboNex Smart India Hackathon idea-submission presentation"
+Document data provenance, sensor units, calibration procedures and test evidence with each change. Never present a simulated packet, generated sample or historical CSV as a live commissioned sensor reading.
