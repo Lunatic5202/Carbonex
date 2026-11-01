@@ -8,3 +8,8 @@ frontend/coal-mine-gis/node_modules/
 frontend/coal-mine-gis/dist/
 
 *.joblib.tmp
+
+# PlatformIO generated toolchains, object files and firmware builds
+esp/.pio/
+*.elf
+*.map
