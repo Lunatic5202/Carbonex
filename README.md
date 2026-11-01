@@ -93,3 +93,7 @@ The proposed node design references ESP32, LoRa SX1278, MPU6050 and strain sensi
 ## Contributing
 
 Document data provenance, sensor units, calibration procedures and test evidence with each change. Never present a simulated packet, generated sample or historical CSV as a live commissioned sensor reading.
+
+## License and data rights
+
+No project-wide license is currently provided. Do not assume permission to copy, modify, or redistribute this repository. Sensor datasets, trained models, hardware designs, and third-party materials may have separate ownership or usage terms; verify provenance and permissions before reuse.
